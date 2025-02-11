@@ -1,0 +1,486 @@
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-Light.ttf');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-LightItalic.ttf');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-Italic.ttf');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-Semibold.ttf');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-SemiboldItalic.ttf');
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-Bold.ttf');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-BoldItalic.ttf');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-ExtraBold.ttf');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-ExtraBoldItalic.ttf');
+  font-weight: 800;
+  font-style: italic;
+}
+
+body, html{
+  margin: 0 auto;
+  font-family: 'Open Sans', sans serif;
+  font-weight: normal;
+  scroll-behavior: smooth;
+  background-color: #333333;
+}
+
+.brand-section{
+  position: fixed;
+  height: auto;
+  padding: 10px;
+  width: 100%;
+  background-color: #f4f4f4;
+  z-index: 3;
+}
+
+.brand-section .logo {
+  max-width: 150px;
+  width: 100%;
+  height: auto;
+}
+
+.brand-section .grid-brand{
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+  padding: 0 40px;
+  grid-template-areas: ". content brand-name brand-name brand-name phone-numbers";
+  z-index: 3;
+}
+
+.brand-section .content{ 
+  grid-area: content;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  flex-direction: row;
+}
+
+.brand-section img{
+  width: 28px;
+  height: 28px;
+}
+
+.brand-section .phone-numbers {
+  grid-area: phone-numbers;
+  display: flex;
+  align-items: center;
+  justify-content: right; 
+  min-width: 200px;
+}
+
+.brand-section .phone-list{
+  padding-left: 10px;
+}
+
+.brand-section .brand-name {
+  grid-area: brand-name;
+  display: flex;
+  align-items: center;
+  justify-content: left; 
+  font-size: 1.8em;
+  font-weight: 800;
+  color: #d25734;
+}
+
+.phone-numbers a{
+  text-decoration: none;
+  font-weight: 600;
+  color: #333;
+}
+
+.phone-numbers a:hover{
+  color: #3da6c0;
+}
+
+.main-section{
+  position: relative;
+  height: auto;
+  min-height: 75vh;
+  padding: 10px;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  color: white;
+  background: url("../images/top_photo.jpeg") no-repeat center center fixed;
+  background-size: cover;
+}
+
+.main-section::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  opacity: 0.6;
+  z-index: 1;
+}
+
+.main-section .grid-main{
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+  padding: 0 40px;
+  padding-top: 100px;
+  grid-template-areas: ". content-left content-right content-right content-right content-right";
+  z-index: 2;
+}
+
+.main-section .content-right a{
+  color: #4bcfef;
+  text-decoration: none;
+}
+
+.main-section .content-right a:hover{
+  color: #b9e6f1;
+}
+
+.main-section .content-right .title{
+  font-weight: 800;
+}
+
+.main-section .content-right p{
+  font-weight: 600;
+}
+
+.main-section .content-left p{
+  color: #f2f2f2;
+  font-weight: 700;
+  z-index: 2;
+}
+
+.main-section .content-left a, .main-section .content-left button{
+  font-weight: 600;
+}
+
+.whatsapp-btn:hover{
+  background-color: #43fb39 !important;
+}
+
+.facebook-btn:hover{
+  background-color: #3963fb !important;
+}
+
+.instagram-btn:hover{
+  background-color: #fb3980 !important;
+}
+
+.content-left{
+  grid-area: content-left;
+  max-width: 400px;
+  width: 100%;
+  z-index: 2;
+}
+
+.content-right{
+  grid-area: content-right;
+  max-width: 700px;
+  width: 100%;
+  z-index: 2;
+}
+
+.main-section .social-header{
+  font-weight: 600;
+}
+
+.social-header {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.social-buttons .btn {
+  width: 100%; 
+  max-width: 400px;
+  padding: 10px;
+  font-size: 1rem;
+  text-align: left;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.social-buttons .btn:hover {
+  background-color: #f4f4f4;
+}
+
+.social-buttons .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.main-section h3 {
+  font-size: 2rem;
+}
+
+.main-section p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.main-section button{
+  color: #080b25;
+  font-weight: 600;
+}
+
+.main-section button:hover{
+  color: #283397 !important;
+}
+
+.analytics-section{
+  display: flex;
+  height: auto !important;
+  background-color: #333333;
+}
+
+.analytics-section .grid-analytics{
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  padding: 15px 40px;
+  grid-template-areas: ". content-copyright . content-analytics .";
+}
+
+.content-copyright{
+  grid-area: content-copyright;
+  max-width: 300px;
+  min-width: 200px;
+  width: 100%;
+  min-height: 200px;
+}
+
+.copyright, .analytics-title{
+  color: #f2f2f2;
+}
+
+.copyright b, .analytics-title {
+  font-weight: 800;
+}
+
+.content-analytics{
+  grid-area: content-analytics;
+  max-width: 300px;
+  min-width: 200px;
+  width: 100%;
+  min-height: 200px;
+}
+
+@media (max-width: 768px) {
+  .brand-section {
+    position: relative;
+    font-size: 1.5em;
+    padding: 0;
+  }
+
+  .brand-section .grid-brand {
+    grid-template-columns: 1fr; 
+    grid-template-areas: 
+      "content"
+      "brand-name"
+      "phone-numbers";
+    gap: 0px;
+    justify-items: center;
+  }
+
+  .brand-section .phone-numbers {
+    justify-content: center;
+    min-width: 150px;
+    padding-bottom: 10px;
+    font-size: 1em;
+  }
+  
+  .brand-section .content {
+    flex-direction: column; 
+    text-align: center;
+  }
+  
+  .brand-section .brand-name{
+    text-align: center;
+    font-size: 1.3em;
+  }
+
+  .main-section .grid-main {
+    grid-template-columns: 1fr; 
+    padding: 0 20px;
+    padding-top: 50px;
+  }
+
+  .main-section .title {
+    font-size: 1.7rem;
+  }
+
+  .main-section .grid-main {
+    grid-template-columns: 1fr; 
+    grid-template-areas: 
+      "content-right"  
+      "content-left";
+  }
+
+  .content-left {
+    margin-bottom: 20px;
+    max-width: 100%;
+  }
+
+  .content-right {
+    max-width: 100%;
+  }
+
+  .content-right h3 {
+    font-size: 1.7em;
+  }
+
+  .analytics-section .grid-analytics{
+    grid-template-columns: 1fr; 
+    grid-template-areas: 
+      "content-copyright"
+      "content-analytics";
+  }
+
+  .content-copyright{
+    min-height: 100px;
+  }
+
+  .content-analytics{
+    min-height: 100px;
+  }
+}
+
+/* Mobile Devices (576px and below) */
+@media (max-width: 576px) {
+  .brand-section .grid-brand{
+    padding: 0 10px;
+  }
+
+  .brand-name {
+    font-size: 1.2em;
+  }
+
+  .main-section .title {
+    font-size: 1.7rem; 
+  }
+
+  .main-section p {
+    font-size: 1rem; 
+  }
+
+  .main-section .grid-main {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+/* Mobile Devices (extremely small screens) */
+@media (max-width: 325px) {
+  .brand-section .grid-brand{
+    padding: 0;
+  }
+
+  .brand-name {
+    font-size: 1rem; 
+  }
+  
+  .main-section .title {
+    font-size: 1.6rem;
+  }
+
+  .main-section p {
+    font-size: 0.9rem;
+    padding: 0 10px;
+  }
+
+  .main-section .grid-main {
+    grid-template-columns: 1fr; 
+    grid-template-areas:
+      "content-right"  
+      "content-left";
+  }
+
+  .content-left,
+  .content-right {
+    max-width: 100%;
+    width: 100%; 
+    padding: 0 10px;
+  }
+
+  .content-right img {
+    min-height: 200px; 
+    object-fit: cover;
+  }
+
+  .social-buttons .btn {
+    font-size: 0.8rem; 
+    padding: 8px; 
+  }
+
+  .analytics-section .grid-analytics{
+    justify-items: center;
+    padding: 10px;
+  }
+
+  .content-copyright{
+    min-width: 100px;
+    padding: 5px;
+  }
+
+  .content-analytics{
+    min-width: 100px;
+    padding: 5px;
+  }
+}
