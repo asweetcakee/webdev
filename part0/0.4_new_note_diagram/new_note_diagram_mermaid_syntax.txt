@@ -1,0 +1,40 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    activate server   
+    Note right of browser: The browser sends POST request with the message "667 – Only the chosen one can comprehend this message".
+    server->>browser: 302 Redirect to "notes.html"
+    deactivate server
+    Note left of server: Status 302. The server redirects the browser to "notes.html", making the page to reload.
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+    activate server
+    Note right of browser: The browser automatically does this request after redirection code 302.
+    server->>browser: HTML notes
+    Note left of server: Status 200.
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    activate server
+    Note right of browser: The browser auto requests this file for styling.
+    server->>browser: CSS main. 
+    Note left of server: Status 200.
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    activate server
+    Note right of browser: The browser auto requests this JS file.
+    server->>browser: JS main
+    Note left of server: Status 200.
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    activate server
+    Note right of browser: The browser requests this JSON file because JS executed a request to fetch the notes.
+    server->>browser: JSON data
+    Note left of server: Status 200. The server responses with the final modified JSON file.
+    deactivate server
+    
+

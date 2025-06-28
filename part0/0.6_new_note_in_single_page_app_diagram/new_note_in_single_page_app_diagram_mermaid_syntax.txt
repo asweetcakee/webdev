@@ -1,0 +1,29 @@
+sequenceDiagram
+    participant browser
+    participant javascript
+    participant server
+
+    browser->>javascript: Executes spa.js
+    activate javascript
+    Note right of javascript: JS controls the submission form.
+
+    javascript->>javascript: Prevents page reload
+    Note right of javascript: The form does not trigger 302 Redirect.
+
+    javascript->>javascript: Creates a new note object
+    Note right of javascript: The note includes content and timestamp.
+
+    javascript->>javascript: Updates UI (DOM API)
+    Note right of javascript: The note is added to the page.
+
+    javascript->>server: POST JSON https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    activate server
+    Note right of javascript: JS sends the new note as JSON (Content-type).
+
+    server->>javascript: {"message":"note created"}
+    Note left of server: Status 201. The server successfully creates the note.
+    deactivate server
+
+    javascript->>javascript: No further requests
+    Note right of javascript: The page remains unchanged, no reload happens.
+    deactivate javascript

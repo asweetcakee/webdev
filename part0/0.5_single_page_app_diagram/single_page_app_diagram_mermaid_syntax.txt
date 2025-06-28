@@ -1,0 +1,33 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa
+    activate server
+    Note right of browser: The browser auto requests this HTML file.
+    server->>browser: HTML spa
+    Note left of server: Status 200.
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    activate server
+    Note right of browser: The browser auto requests this file for styling.
+    server->>browser: CSS main. 
+    Note left of server: Status 200.
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+    activate server
+    Note right of browser: The browser auto requests this JS file.
+    server->>browser: JS spa
+    Note left of server: Status 200.
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    activate server
+    Note right of browser: The browser requests this JSON file because JS executed a request to fetch the notes.
+    server->>browser: JSON data
+    Note left of server: Status 200. The server responses with the final modified JSON file.
+    deactivate server
+    
+
