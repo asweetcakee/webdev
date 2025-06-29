@@ -1,17 +1,14 @@
   import { useState } from 'react'
 
-  const Phonebook = ({title, onInputChange, onAdd, nameValue, numberValue, filterValue}) => {
+  const Filter = ({onInputChange, filterValue}) => {
     return(
       <>
-        <h2>{title}</h2>
-        filter shown with: <Input name={"filter"} onChange={onInputChange} value={filterValue} />
-        <h2>Add a new</h2>
-        <Form onInputChange={onInputChange} onAdd={onAdd} nameValue={nameValue} numberValue={numberValue} />
+        filter shown with:<Input name={"filter"} onChange={onInputChange}  value={filterValue} />
       </>
     )
   }
 
-  const Form = ({onInputChange, onAdd, nameValue, numberValue}) => {
+  const PersonForm = ({onInputChange, onAdd, nameValue, numberValue}) => {
     return(
       <form>
         <div>
@@ -29,7 +26,7 @@
   const Input = ({name, onChange, value}) => <input name={name} value={value} onChange={onChange}/>
   const Button = ({title, type, onClick}) => <button type={type} onClick={onClick}>{title}</button>
 
-  const ShowPerson = ({persons, filterValue}) => {
+  const Persons = ({persons, filterValue}) => {
     const filteredPersons = filterValue.trim() === ""
     ? persons
     : persons.filter(person => {
@@ -92,9 +89,15 @@
     
     return (
       <div>
-        <Phonebook title={"Phonebook"} onInputChange={handleInput} onAdd={handleAddPerson} nameValue={newName} numberValue={newNumber} filterValue={newFilter}/>
-        <h2>Numbers</h2>
-        <ShowPerson persons={persons} filterValue={newFilter}/>
+        <h2>Phonebook</h2>
+        <Filter onInputChange={handleInput} filterValue={newFilter}/>
+
+        <h3>Add a new</h3>
+        <PersonForm onInputChange={handleInput} onAdd={handleAddPerson} nameValue={newName} numberValue={newNumber}/>
+
+        <h3>Numbers</h3>
+        <Persons persons={persons} filterValue={newFilter}/>
+
       </div>
     )
   }
