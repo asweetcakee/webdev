@@ -1,6 +1,6 @@
   import { useState } from 'react'
   import { useEffect } from 'react'
-  import axios from 'axios'
+  import personServices from './services/persons'
 
   const Filter = ({onInputChange, filterValue}) => {
     return(
@@ -54,11 +54,8 @@
     const [newFilter, setNewFilter] = useState('')
 
     const hook = () => {
-      axios
-        .get('http://localhost:3001/persons')
-        .then(response => {
-          setPersons(response.data)
-        })
+      const promise = personServices.getAll()
+      promise.then(person => setPersons(person))
     }
     useEffect(hook, [])
 
@@ -87,7 +84,7 @@
       personExist 
       ? alert(`${newName} is already added to phonebook`) 
       : (
-          setPersons(persons.concat({name: newName, number: newNumber, id: persons.length + 1})),
+          personServices.create({name: newName, number: newNumber}).then(person => setPersons(persons.concat(person))),
           resetInputs()
         )
     }
