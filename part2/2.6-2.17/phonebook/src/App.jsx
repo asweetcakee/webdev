@@ -11,12 +11,19 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationType, setNotificationType] = useState('success')
+
+  const MSG_TYPES = {
+    success: "success",
+    error: "error",
+    default: "default"
+  }
 
   useEffect(() => {
     const promise = personServices.getAll()
     promise.then(person => setPersons(person))
     .catch(error => {
-      notify('Could not load phonebook data.')
+      notify('Could not load phonebook data.', MSG_TYPES.error)
     })
   }, [])
 
@@ -30,8 +37,9 @@ const App = () => {
     return () => clearTimeout(timeoutId)
   }, [notificationMessage])
 
-  const notify = (message) => {
+  const notify = (message, type = MSG_TYPES.default) => {
     setNotificationMessage(message)
+    setNotificationType(type)
   }
 
   const resetInputs = () => {
@@ -50,7 +58,7 @@ const App = () => {
   const handleAddPerson = (event) => {
     event.preventDefault()
     if (newName.trim() === "" || newNumber.trim() === ""){
-      notify("Name or phone cannot be empty")
+      notify("Name or phone cannot be empty", MSG_TYPES.error)
       return
     }  
 
@@ -58,13 +66,13 @@ const App = () => {
     
     if(!person) {
       personServices.create({name: newName, number: newNumber}).then(person => setPersons(persons.concat(person)))
-      notify(`Added ${newName}`)
+      notify(`Added ${newName}`, MSG_TYPES.success)
       resetInputs()
       return
     }
 
     if (person.number === newNumber){
-      notify(`${newName} is already added to phonebook and the number is the same. No need to update.`) 
+      notify(`${newName} is already added to phonebook and the number is the same. No need to update.`, MSG_TYPES.default) 
       resetInputs()
       return
     }
@@ -79,13 +87,14 @@ const App = () => {
     const promise = personServices.update(person.id, updatedNumber)
     
     promise.then(returnedPerson => {
-      notify(`Updated ${returnedPerson.name} number.`)
+      notify(`Updated ${returnedPerson.name} number.`, MSG_TYPES.success)
       setPersons(persons.map(p => p.id === person.id ? returnedPerson : p))
       resetInputs()
     })
     .catch(error => {
-      notify(`Update failed: Information of ${person.name} has already been removed from server.`)
+      notify(`Update failed: Information of ${person.name} has already been removed from server.`, MSG_TYPES.error)
       setPersons(persons.filter(p => p.id !== person.id))
+      resetInputs()
     })
   }
   
@@ -98,11 +107,11 @@ const App = () => {
     const promise = personServices.deleteByID(person.id)
 
     promise.then(person => {
-      notify(`Deleted ${person.name}`)
+      notify(`Deleted ${person.name}`, MSG_TYPES.success)
       setPersons(persons.filter(p => p.id !== id))
     })
     .catch(error => {
-      notify(`Delete failed: ${person.name} was already removed from server.`)
+      notify(`Delete failed: ${person.name} was already removed from server.`, MSG_TYPES.error)
       setPersons(persons.filter(p => p.id !== id))
     })
   }
@@ -112,7 +121,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage}/>
+      <Notification message={notificationMessage} type={notificationType}/>
       <Filter onInputChange={handleInput} filterValue={newFilter}/>
 
       <h3>Add a new</h3>
