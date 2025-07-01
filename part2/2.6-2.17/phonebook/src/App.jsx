@@ -28,7 +28,7 @@
   const Input = ({name, onChange, value}) => <input name={name} value={value} onChange={onChange}/>
   const Button = ({title, type, onClick}) => <button type={type} onClick={onClick}>{title}</button>
 
-  const Persons = ({persons, filterValue}) => {
+  const Persons = ({persons, filterValue, onDelete}) => {
     const filteredPersons = filterValue.trim() === ""
     ? persons
     : persons.filter(person => {
@@ -41,7 +41,18 @@
     
     return(
       <div>
-        {filteredPersons.map(person => <p key={person.id}>{person.name} {person.number}</p>)}
+        {filteredPersons.map(person => {
+          return(
+            <div key={person.id}>
+              <p>
+                {person.name} {person.number}
+                &nbsp;&nbsp;
+                <Button title={"delete"} type={"button"} onClick={() => onDelete(person.id)}/>
+              </p>
+            </div>
+            )
+          })
+        }
       </div>
     )
   }
@@ -88,6 +99,21 @@
           resetInputs()
         )
     }
+    
+    const handleDeletePerson = (id) => {
+      
+      const person = persons.find(person => person.id === id)
+      const confirmation = window.confirm(`Delete ${person.name}?`)
+
+      if (confirmation === false) return
+
+      const promise = personServices.deleteByID(person.id)
+      promise.then(person => {
+        console.log("-delete:", person)
+        return setPersons(persons.filter(person => person.id !== id))
+      })
+    }
+    
     console.log("persons:", persons)
     
     return (
@@ -99,7 +125,7 @@
         <PersonForm onInputChange={handleInput} onAdd={handleAddPerson} nameValue={newName} numberValue={newNumber}/>
 
         <h3>Numbers</h3>
-        <Persons persons={persons} filterValue={newFilter}/>
+        <Persons persons={persons} filterValue={newFilter} onDelete={handleDeletePerson}/>
 
       </div>
     )
