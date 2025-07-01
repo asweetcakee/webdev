@@ -90,14 +90,38 @@
         return
       }  
 
-      const personExist = persons.some(person => person.name === newName)
+      const person = persons.find(p => p.name === newName)
+      
+      if(!person) {
+        personServices.create({name: newName, number: newNumber}).then(person => setPersons(persons.concat(person)))
+        resetInputs()
+        return
+      }
 
-      personExist 
-      ? alert(`${newName} is already added to phonebook`) 
-      : (
-          personServices.create({name: newName, number: newNumber}).then(person => setPersons(persons.concat(person))),
-          resetInputs()
-        )
+      if (person.number === newNumber){
+        alert(`${newName} is already added to phonebook and the number is the same. No need to update.`) 
+        resetInputs()
+        return
+      }
+
+      const confirmation = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`) 
+      if (!confirmation) {
+        resetInputs()
+        return
+      }
+      
+      const updatedNumber = {...person, number: newNumber}
+      const promise = personServices.update(person.id, updatedNumber)
+      promise.then(returnedPerson => {
+        console.log("-returned person:", returnedPerson)
+        setPersons(persons.map(p => p.id === person.id ? returnedPerson : p))
+        resetInputs()
+      })
+      .catch(error => {
+        alert(`Update failed: ${person.name} was already removed from server.`)
+        setPersons(persons.filter(p => p.id !== person.id))
+      })
+
     }
     
     const handleDeletePerson = (id) => {
@@ -108,10 +132,11 @@
       if (confirmation === false) return
 
       const promise = personServices.deleteByID(person.id)
-      promise.then(person => {
-        console.log("-delete:", person)
-        return setPersons(persons.filter(person => person.id !== id))
-      })
+      promise.then(() => setPersons(persons.filter(p => p.id !== id)))
+      .catch(error => {
+          alert(`Delete failed: ${person.name} was already removed from server.`)
+          setPersons(persons.filter(p => p.id !== id))
+        })
     }
     
     console.log("persons:", persons)
