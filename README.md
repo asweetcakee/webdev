@@ -10,12 +10,17 @@ The course focuses on modern web development techniques using **JavaScript, Reac
 
 ## Technologies Used
 - React
-- Node.js
+- JS (ES6+)
+- JSX
+- HTML, CSS
+- Vite
+- Node.js & npm
+- REST APIs
 
 ## Current progress: WIP
 - [x] Part 0
-- [ ] Part 1
-- [ ] Part 2
+- [x] Part 1
+- [x] Part 2
 - [ ] Part 3
 - [ ] part 4
 - [ ] part 5
