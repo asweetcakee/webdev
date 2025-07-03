@@ -1,11 +1,23 @@
+import { useState } from "react"
+import CountryDetail from "./CountryDetail"
+
 const CountryList = ({countries}) => {
-  console.log("LOOK",countries)
+  const [selectedCountry, setSelectedCountry] = useState(null)
+
   return(
     <div>
-      {countries.map((country, index) => {
-          return <p key={index}>{country.name.common}</p>
+      {countries.map(country => {
+          return (
+            <div key={country.cca3}>
+              {country.name.common} &nbsp; 
+              <button onClick={() => setSelectedCountry(country)}>Show</button>
+            </div>
+          )
         })
       }
+
+      {selectedCountry && ( <CountryDetail country={selectedCountry} /> )} 
+
     </div>
   )
 }
