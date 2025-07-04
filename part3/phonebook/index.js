@@ -37,6 +37,13 @@ app.get('/api/info', (request, response) => {
   `)
 })
 
+app.get('/api/persons/:id', (request, response) => {
+  const id = request.params.id
+  const person = persons.find(p => p.id === id)
+  console.log(person)
+  person ? response.json(person) : response.status(404).send(`ERROR: A person under ID: ${id} was already deleted`)
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
