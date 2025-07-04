@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 
-const persons = [
+let persons = [
     { 
       "id": "1",
       "name": "Arto Hellas", 
@@ -43,6 +43,13 @@ app.get('/api/persons/:id', (request, response) => {
   console.log(person)
   person ? response.json(person) : response.status(404).send(`ERROR: A person under ID: ${id} was already deleted`)
 })
+
+app.delete('/api/persons/:id', (request, response) => {
+  const id = request.params.id
+  persons = persons.filter(p => p.id !== id)
+  response.status(204).end()
+})
+
 
 const PORT = 3001
 app.listen(PORT, () => {
