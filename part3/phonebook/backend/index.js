@@ -11,6 +11,8 @@ morgan.token('body', (req, res) => {
 
 app.use(morgan(`${tiny} :body`))
 
+app.use(express.static('dist'))
+
 let persons = [
     { 
       "id": "1",
