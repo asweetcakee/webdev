@@ -41,7 +41,8 @@ mongoose.connect(finalUrl)
     return mongoose.connection.close()
   })
   .catch(error => {
-    console.log('Error connecting to MongoDB, error:', error)
+    console.log('Error connecting to MongoDB, error:', error.message)
+    process.exit(1)
   })
 
 
