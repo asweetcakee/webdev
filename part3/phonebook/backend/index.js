@@ -57,37 +57,33 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
-const generateId = () => {
-  let id;
-  do {
-    id = Math.floor(Math.random() * 1000000000).toString()
-  } while (persons.find(p => p.id === id))
-  return id
-}
-
 app.post('/api/persons', (request, response) => {
-  const { name, number } = request.body
+  const { name: newName, number: newNumber } = request.body
 
-  if (!name || !number) {
+  if (!newName || !newNumber) {
     return response.status(400).json({
       error: "name or number is missing"
     })
   }
 
-  if (persons.find(p => p.name === name)){
-   return response.status(400).json({
-      error: "name must be unique"
-    })
-  }
+  // if (persons.find(p => p.name === name)){
+  //  return response.status(400).json({
+  //     error: "name must be unique"
+  //   })
+  // }
 
-  const person = {
-    id: generateId(),
-    name,
-    number
-  }
-  persons.push(person)
+  const person = new Person({
+    name: newName,
+    number: newNumber
+  })
   
-  response.status(201).json(person)
+  person.save().then(savedPerson => {
+    response.status(201).json(savedPerson)
+  })
+  .catch(error => {
+    console.log('Error saving person:', error.message)
+    response.status(500).json({ error: 'internal server error' })
+  })
 })
 
 const PORT = process.env.PORT
