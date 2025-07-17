@@ -15,17 +15,14 @@ app.use(morgan(`${tiny} :body`))
 
 let persons = [] 
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response, next) => {
   Person.find({}).then(persons => {
     response.json(persons)
   })
-  .catch(error => {
-    console.log('Error retrieving persons:', error.message)
-    response.status(500).json({ error: 'internal server error' })
-  })
+  .catch(error => next(error))
 })
 
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
   Person.countDocuments({}).then(count => {
     const now = new Date()
     response.send(`
@@ -33,39 +30,30 @@ app.get('/info', (request, response) => {
       <p>${now}</p>  
     `)
   })
-  .catch(error => {
-    console.log('Error retrieving info:', error.message)
-    response.status(500).json({ error: 'internal server error' })
-  })
+  .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
   Person.findById(id).then(person => {
     person 
       ? response.json(person) 
       : response.status(404).send(`ERROR: A person under ID: ${id} was already deleted`)
   })
-  .catch(error => {
-    console.log('Error retrieving a person by id:', error.message)
-    response.status(500).json({ error: 'internal server error' })
-  })
+  .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
 
   Person.findByIdAndDelete(id)
   .then(result => {
     response.status(204).end()
   })
-  .catch(error => {
-    console.log('Error deleting a person:', error.message)
-    response.status(500).json({ error: 'internal server error' })
-  })
+  .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const { name: newName, number: newNumber } = request.body
 
   if (!newName || !newNumber) {
@@ -88,11 +76,19 @@ app.post('/api/persons', (request, response) => {
   person.save().then(savedPerson => {
     response.status(201).json(savedPerson)
   })
-  .catch(error => {
-    console.log('Error saving person:', error.message)
-    response.status(500).json({ error: 'internal server error' })
-  })
+  .catch(error => next(error))
 })
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError'){ 
+    return response.status(400).json({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
