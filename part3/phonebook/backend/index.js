@@ -8,9 +8,10 @@ morgan.token('body', (req, res) => {
 })
 
 const app = express()
+app.use(express.static('dist'))
 app.use(express.json())
 app.use(morgan(`${tiny} :body`))
-app.use(express.static('dist'))
+
 
 let persons = [] 
 
@@ -53,8 +54,15 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.delete('/api/persons/:id', (request, response) => {
   const id = request.params.id
-  persons = persons.filter(p => p.id !== id)
-  response.status(204).end()
+
+  Person.findByIdAndDelete(id)
+  .then(result => {
+    response.status(204).end()
+  })
+  .catch(error => {
+    console.log('Error deleting a person:', error.message)
+    response.status(500).json({ error: 'internal server error' })
+  })
 })
 
 app.post('/api/persons', (request, response) => {
