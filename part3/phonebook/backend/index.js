@@ -12,9 +12,6 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(morgan(`${tiny} :body`))
 
-
-let persons = [] 
-
 app.get('/api/persons', (request, response, next) => {
   Person.find({}).then(persons => {
     response.json(persons)
@@ -57,26 +54,45 @@ app.post('/api/persons', (request, response, next) => {
   const { name: newName, number: newNumber } = request.body
 
   if (!newName || !newNumber) {
-    return response.status(400).json({
-      error: "name or number is missing"
-    })
+    return response.status(400).json({ error: "name or number is missing" })
   }
 
-  // if (persons.find(p => p.name === name)){
-  //  return response.status(400).json({
-  //     error: "name must be unique"
-  //   })
-  // }
+  Person.findOne({ name: newName })
+    .then(existingPerson => {
+      if (existingPerson) {
+        return response.status(400).json({ error: "name must be unique" })
+      }
+      const person = new Person({
+        name: newName,
+        number: newNumber
+      })
+      
+      return person.save().then(savedPerson => {
+        response.status(201).json(savedPerson)
+      })
+      .catch(error => next(error))
+    })
+    .catch(error => next(error))
+})
 
-  const person = new Person({
-    name: newName,
-    number: newNumber
-  })
-  
-  person.save().then(savedPerson => {
-    response.status(201).json(savedPerson)
-  })
-  .catch(error => next(error))
+app.put('/api/persons/:id', (request, response, next) => {
+  const { name: newName, number: newNumber } = request.body
+  const id = request.params.id
+
+  if (!newName || !newNumber) {
+    return response.status(400).json({ error: "name or number is missing" })
+  }
+
+  const updatedPerson = { name: newName, number: newNumber }
+
+  Person.findByIdAndUpdate(id, updatedPerson, { new: true })
+    .then(result => {
+      if (!result) {
+        return response.status(404).json({ error: "person not found" })
+      }      
+      response.json(result)
+    })
+    .catch(error => next(error))
 })
 
 const errorHandler = (error, request, response, next) => {
