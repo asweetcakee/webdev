@@ -99,8 +99,12 @@ const App = () => {
       resetInputs()
     })
     .catch(error => {
-      notify(`Update failed: Information of ${person.name} has already been removed from server.`, MSG_TYPES.error)
-      setPersons(persons.filter(p => p.id !== person.id))
+      if (error.response && error.response.status === 400) {
+        notify(error.response.data.error, MSG_TYPES.error)
+      } else {
+        notify(`Update failed: Information of ${person.name} has already been removed from server.`, MSG_TYPES.error)
+        setPersons(persons.filter(p => p.id !== person.id))
+      }      
       resetInputs()
     })
   }

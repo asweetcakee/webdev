@@ -19,7 +19,24 @@ const phonebookSchema = new mongoose.Schema({
     },
     required: [true, 'Name is required']
   },
-  number: String
+  number: {
+    type: String,
+    validate: [
+      {
+        validator: function(v) {
+          return v.length >= 8
+        },
+        message: props => `(${props.value}) must be at least 8 characters long`
+      },
+      {
+        validator: function(v) {
+          return /^\d{2,3}-\d{5,}$/.test(v)
+        },
+        message: props => `${props.value} must follow this format: XX-XXXXXXX or XXX-XXXXXXX`
+      }
+    ],
+    required: [true, 'Number is required']
+  }
 })
 
 console.log('Connecting to', finalUrl)
