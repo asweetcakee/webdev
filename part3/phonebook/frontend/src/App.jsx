@@ -65,9 +65,16 @@ const App = () => {
     const person = persons.find(p => p.name === newName)
     
     if(!person) {
-      personServices.create({name: newName, number: newNumber}).then(person => setPersons(persons.concat(person)))
-      notify(`Added ${newName}`, MSG_TYPES.success)
-      resetInputs()
+      personServices
+        .create({name: newName, number: newNumber})
+        .then(person => {
+          setPersons(persons.concat(person))
+          notify(`Added ${newName}`, MSG_TYPES.success)
+        })
+        .catch(error => {
+          notify(error.response.data.error, MSG_TYPES.error)
+        })
+      resetInputs() 
       return
     }
 
@@ -106,7 +113,7 @@ const App = () => {
 
     const promise = personServices.deleteByID(person.id)
 
-    promise.then(person => {
+    promise.then(result => {
       notify(`Deleted ${person.name}`, MSG_TYPES.success)
       setPersons(persons.filter(p => p.id !== id))
     })

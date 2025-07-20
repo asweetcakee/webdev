@@ -9,7 +9,16 @@ const password = process.env.PASSWORD
 const finalUrl = baseUrl.replace('<USERNAME>', userName).replace('<PASSWORD>', password)
 
 const phonebookSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    validate: {
+      validator: function(v) {
+        return v.length >= 3
+      },
+      message: props => `(${props.value}) must be at least 3 characters long`
+    },
+    required: [true, 'Name is required']
+  },
   number: String
 })
 
