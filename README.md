@@ -21,7 +21,7 @@ The course focuses on modern web development techniques using **JavaScript, Reac
 - [x] Part 0
 - [x] Part 1
 - [x] Part 2
-- [ ] Part 3
+- [x] Part 3
 - [ ] part 4
 - [ ] part 5
 - [ ] part 6
