@@ -24,6 +24,7 @@ const App = () => {
     promise.then(person => setPersons(person))
     .catch(error => {
       notify('Could not load phonebook data.', MSG_TYPES.error)
+      console.log(error.message)
     })
   }, [])
 
@@ -117,13 +118,14 @@ const App = () => {
 
     const promise = personServices.deleteByID(person.id)
 
-    promise.then(result => {
+    promise.then(() => {
       notify(`Deleted ${person.name}`, MSG_TYPES.success)
       setPersons(persons.filter(p => p.id !== id))
     })
     .catch(error => {
       notify(`Delete failed: ${person.name} was already removed from server.`, MSG_TYPES.error)
       setPersons(persons.filter(p => p.id !== id))
+      console.log(error.message)
     })
   }
   
