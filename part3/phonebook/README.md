@@ -1,8 +1,13 @@
 ## Full Stack Open 2025 — Part 3
-This folder contains my **backend and frontend solutions** for **Part 3 exercises** of the Full Stack Open course.
+This directory contains my **backend and frontend solutions** to **Part 3** of the [Full Stack Open 2025](https://fullstackopen.com/en/part3) course. The focus is on **building a RESTful API using Node.js and Express**, connecting it to a **MongoDB** database, and integrating the API with a **React frontend**.
   
 Each solved exercise is committed using the following convention:
 > `Completed [exercise number]: [exercise name]. [what was done in the exercise]`
+
+## Exercises
+| Section        | Range       | Description                               |
+|----------------|-------------|-------------------------------------------|
+| `phonebook`    | 3.1 – 3.22  | CRUD API, middleware, MongoDB, deployment |
 
 ## Links
 This part connects the **backend from Part 3** with the **frontend from Part 2**, and was deployed to a cloud platform (Render).
