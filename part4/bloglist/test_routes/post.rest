@@ -40,3 +40,14 @@ Content-Type: application/json
   "url": "https://www.ynharari.com/sapiens",
   "likes": 2300
 }
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "ahmm",
+  "author": "nope",
+  "url": "no url",
+  "likes": 0
+}
