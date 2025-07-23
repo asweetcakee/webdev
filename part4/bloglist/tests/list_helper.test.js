@@ -87,3 +87,32 @@ describe('most blogs', () => {
     assert.deepStrictEqual(result, { author: 'Yuval Noah Harari', blogs: 2 })
   })
 })
+
+/* MOST LIKES */
+describe('most likes', () => {
+  test('of an empty list', () => {
+    const blogs = []
+    const result = listHelper.mostLikes(blogs)
+    assert.strictEqual(result, null)
+  })
+
+  test('returns the only author when list has a single blog', () => {
+    const result = listHelper.mostLikes(bloglists.listWithOneBlog)
+    assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 5 })
+  })
+
+  test('returns an author with the most likes', () => {
+    const result = listHelper.mostLikes(bloglists.listWithMultipleAuthorsAndDifferentLikesCount)
+    assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 17 })
+  })
+
+  test('returns first author with the most likes when each author share the same amount of likes', () => {
+    const result = listHelper.mostLikes(bloglists.listWithAuthorsThatShareSameLikesCount)
+    assert.deepStrictEqual(result, { author: 'Douglas Adams', likes: 0 })
+  })
+
+  test('handles negative likes correctly', () => {
+    const result = listHelper.mostLikes(bloglists.listWithSomeAuthorsWhereOneBlogIsNegative)
+    assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 9 })
+  })
+})

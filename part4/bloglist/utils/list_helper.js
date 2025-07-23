@@ -27,7 +27,7 @@ const mostBlogs = (blogs) => {
     const { author } = blog
     authorCounts[author] = (authorCounts[author] || 0) + 1
   }
-  console.log('-Authors:', authorCounts)
+  //console.log('-Authors:', authorCounts)
 
   let maxBlogs = {
     author: null,
@@ -42,9 +42,37 @@ const mostBlogs = (blogs) => {
       }
     }
   }
-  console.log('-Max blogs:', maxBlogs)
+  //console.log('-Max blogs:', maxBlogs)
 
   return maxBlogs
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
+const mostLikes = (blogs) => {
+  if (!blogs || blogs.length === 0) return null
+
+  let authorLikes = {}
+
+  for (const blog of blogs) {
+    const { author, likes } = blog
+    authorLikes[author] = (authorLikes[author] || 0) + likes
+  }
+  console.log('-Author likes:', authorLikes)
+
+  let maxLikes = {
+    author: null,
+    likes: Number.MIN_SAFE_INTEGER
+  }
+
+  for (const[author, likes] of Object.entries(authorLikes)){
+    if (likes > maxLikes.likes){
+      maxLikes = {
+        author: author,
+        likes: likes
+      }
+    }
+  }
+  console.log('-Max blogs:', maxLikes)
+  return maxLikes
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes }
