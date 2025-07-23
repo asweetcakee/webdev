@@ -1,98 +1,7 @@
 const { test, describe } = require('node:test')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
-
-const listWithOneBlog = [
-  {
-    _id: '5a422aa71b54a676234d17f8',
-    title: 'Go To Statement Considered Harmful',
-    author: 'Edsger W. Dijkstra',
-    url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
-    likes: 5,
-    __v: 0
-  }
-]
-
-const listWithMoreThanOneBlog = [
-  {
-    _id: '687fc57460b41619577ceb2f',
-    title: 'The Hitchhiker\'s Guide to the Galaxy',
-    author: 'Douglas Adams',
-    url: 'https://en.wikipedia.org/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy',
-    likes: 42,
-    __v: 0
-  },
-  {
-    _id: '687fc5fc60b41619577ceb31',
-    title: 'Clean Code: A Handbook of Agile Software Craftsmanship',
-    author: 'Robert C. Martin',
-    url: 'https://www.goodreads.com/book/show/3735293-clean-code',
-    likes: 1500,
-    __v: 0
-  },
-  {
-    _id: '687fc5fd60b41619577ceb33',
-    title: 'Learning React: Modern Patterns for Developing React Apps',
-    author: 'Alex Banks and Eve Porcello',
-    url: 'https://www.oreilly.com/library/view/learning-react/9781492051722/',
-    likes: 876,
-    __v: 0
-  },
-]
-
-const listWithEqualHighestLikesCount = [
-  {
-    _id: '5a422ba71b54a676234d17fb',
-    title: 'TDD harms architecture',
-    author: 'Robert C. Martin',
-    url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
-    likes: 189,
-    __v: 0
-  },
-  {
-    _id: '5a422bc61b54a676234d17fc',
-    title: 'Type wars',
-    author: 'Robert C. Martin',
-    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-    likes: 678,
-    __v: 0
-  },
-  {
-    _id: '687fcd30174116bad4fa8b6b',
-    title: 'Sapiens: A Brief History of Humankind',
-    author: 'Yuval Noah Harari',
-    url: 'https://www.ynharari.com/sapiens',
-    likes: 678,
-    __v: 0
-  }
-]
-
-const listWithBlogsOneIsNegative = [
-  {
-    _id: '687fc57460b41619577ceb2f',
-    title: 'The Hitchhiker\'s Guide to the Galaxy',
-    author: 'Douglas Adams',
-    url: 'https://en.wikipedia.org/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy',
-    likes: 42,
-    __v: 0
-  },
-  {
-    _id: '687fc5fc60b41619577ceb31',
-    title: 'Clean Code: A Handbook of Agile Software Craftsmanship',
-    author: 'Robert C. Martin',
-    url: 'https://www.goodreads.com/book/show/3735293-clean-code',
-    likes: -10,
-    __v: 0
-  },
-  {
-    _id: '687fc5fd60b41619577ceb33',
-    title: 'Learning React: Modern Patterns for Developing React Apps',
-    author: 'Alex Banks and Eve Porcello',
-    url: 'https://www.oreilly.com/library/view/learning-react/9781492051722/',
-    likes: 876,
-    __v: 0
-  },
-]
+const bloglists = require('./bloglists_for_testing')
 
 /* DUMMY */
 test('dummy returns one', () => {
@@ -111,12 +20,12 @@ describe('total likes', () => {
   })
 
   test('when list has only one blog, equals the likes of that', () => {
-    const result = listHelper.totalLikes(listWithOneBlog)
+    const result = listHelper.totalLikes(bloglists.listWithOneBlog)
     assert.strictEqual(result, 5)
   })
 
   test('of a bigger list is calculated right', () => {
-    const result = listHelper.totalLikes(listWithMoreThanOneBlog)
+    const result = listHelper.totalLikes(bloglists.listWithMoreThanOneBlog)
     assert.strictEqual(result, 2418)
   })
 })
@@ -130,22 +39,51 @@ describe('favorite blog', () => {
   })
 
   test('returns a single blog when list has only one blog', () => {
-    const result = listHelper.favoriteBlog(listWithOneBlog)
-    assert.deepStrictEqual(result, listWithOneBlog[0])
+    const result = listHelper.favoriteBlog(bloglists.listWithOneBlog)
+    assert.deepStrictEqual(result, bloglists.listWithOneBlog[0])
   })
 
   test('returns the blog with the highest number of likes in a list, where no other blog shares that highest count', () => {
-    const result = listHelper.favoriteBlog(listWithMoreThanOneBlog)
-    assert.deepStrictEqual(result, listWithMoreThanOneBlog[1])
+    const result = listHelper.favoriteBlog(bloglists.listWithMoreThanOneBlog)
+    assert.deepStrictEqual(result, bloglists.listWithMoreThanOneBlog[1])
   })
 
   test('returns the blog with the highest number of likes in a list, where some blogs share that highest count', () => {
-    const result = listHelper.favoriteBlog(listWithEqualHighestLikesCount)
-    assert.deepStrictEqual(result, listWithEqualHighestLikesCount[1])
+    const result = listHelper.favoriteBlog(bloglists.listWithEqualHighestLikesCount)
+    assert.deepStrictEqual(result, bloglists.listWithEqualHighestLikesCount[1])
   })
 
   test('handles blogs with negative likes correctly', () => {
-    const result = listHelper.favoriteBlog(listWithBlogsOneIsNegative)
-    assert.deepStrictEqual(result, listWithBlogsOneIsNegative[2])
+    const result = listHelper.favoriteBlog(bloglists.listWithBlogsOneIsNegative)
+    assert.deepStrictEqual(result, bloglists.listWithBlogsOneIsNegative[2])
+  })
+})
+
+/* MOST BLOGS */
+describe('most blogs', () => {
+  test('of an empty list', () => {
+    const blogs = []
+    const result = listHelper.mostBlogs(blogs)
+    assert.strictEqual(result, null)
+  })
+
+  test('returns the only author when list has a single blog', () => {
+    const result = listHelper.mostBlogs(bloglists.listWithOneBlog)
+    assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', blogs: 1 })
+  })
+
+  test('returns an author with the most blogs', () => {
+    const result = listHelper.mostBlogs(bloglists.listWithBlogsFromMoreThanOneAuthor)
+    assert.deepStrictEqual(result, { author: 'Robert C. Martin', blogs: 3 })
+  })
+
+  test('returns first author with the most blogs when list contains only unique authors', () => {
+    const result = listHelper.mostBlogs(bloglists.listWithMoreThanOneBlog)
+    assert.deepStrictEqual(result, { author: 'Douglas Adams', blogs: 1 })
+  })
+
+  test('returns first author with the most blogs when list contains some authors with equal blogs quantity', () => {
+    const result = listHelper.mostBlogs(bloglists.listWithSomeAuthorsThatHaveEqualBlogsCount)
+    assert.deepStrictEqual(result, { author: 'Yuval Noah Harari', blogs: 2 })
   })
 })
