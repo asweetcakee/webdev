@@ -7,13 +7,15 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const likes = request.body.likes !== undefined && request.body.likes !== null
-    ? request.body.likes
-    : 0
+  const { title, url, likes } = request.body
+
+  if (!title || !url) {
+    return response.status(400).json({ error: 'missing title or url' })
+  }
 
   const blogData = {
     ...request.body,
-    likes: likes
+    likes: likes !== undefined && likes !== null ? likes : 0
   }
 
   const blog = new Blog(blogData)

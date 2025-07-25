@@ -211,6 +211,13 @@ const listWithOneBlogWithoutLikesPropertyClean = [
   }
 ]
 
+const listWithOneBlogWithoutTitleAndURLPropertyClean = [
+  {
+    author: 'Robert C. Martin',
+    likes: 5
+  }
+]
+
 const totalLikes = {
   oneBlog: listWithOneBlog,
   fewBlogs: listWithMoreThanOneBlog
@@ -248,6 +255,6 @@ const listWithMoreThanOneBlogClean = listWithMoreThanOneBlog.map(stripMongoPrope
 
 module.exports = {
   listWithOneBlog, listWithMoreThanOneBlog,
-  listWithOneBlogClean, listWithMoreThanOneBlogClean, listWithOneBlogWithoutLikesPropertyClean,
+  listWithOneBlogClean, listWithMoreThanOneBlogClean, listWithOneBlogWithoutLikesPropertyClean, listWithOneBlogWithoutTitleAndURLPropertyClean,
   totalLikes, favoriteBlog, mostBlogs, mostLikes
 }

@@ -54,7 +54,7 @@ test('post() adds a valid blog correctly', async () => {
   assert.strictEqual(true, isBlogsContentAdded)
 })
 
-test.only('blog\'s likes property is handled correctly when post() adds a new blog', async () => {
+test('blog\'s likes property is handled correctly when post() adds a new blog', async () => {
   const newBlog = listHelper.listWithOneBlogWithoutLikesPropertyClean[0]
 
   await api
@@ -67,6 +67,21 @@ test.only('blog\'s likes property is handled correctly when post() adds a new bl
   const addedBlog = updatedBlogs.find(blog => blog.title === newBlog.title)
 
   assert.strictEqual(addedBlog.likes, 0)
+})
+
+test('blog\'s title and url properties are handled correctly when post() adds a new blog', async () => {
+  const newBlog = listHelper.listWithOneBlogWithoutTitleAndURLPropertyClean[0]
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
+  assert.strictEqual(response.body.error, 'missing title or url')
+
+  const updatedBlogs = await helper.blogsInDb()
+  assert.strictEqual(updatedBlogs.length, helper.initialBlogs.length)
 })
 
 after(async () => {
