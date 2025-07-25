@@ -228,7 +228,18 @@ const mostLikes = {
   oneBlogHasNegativeLikes: listWithSomeAuthorsWhereOneBlogIsNegative
 }
 
+const stripMongoProperties = (blogList) => {
+  const cleaned = { ...blogList }
+  delete cleaned._id
+  delete cleaned.__v
+  return cleaned
+}
+
+const listWithOneBlogClean = listWithOneBlog.map(stripMongoProperties)
+const listWithMoreThanOneBlogClean = listWithMoreThanOneBlog.map(stripMongoProperties)
+
 module.exports = {
   listWithOneBlog, listWithMoreThanOneBlog,
+  listWithOneBlogClean, listWithMoreThanOneBlogClean,
   totalLikes, favoriteBlog, mostBlogs, mostLikes
 }

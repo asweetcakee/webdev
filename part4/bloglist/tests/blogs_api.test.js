@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
+const listHelper = require('./bloglists_for_testing')
 
 const api = supertest(app)
 beforeEach(async () => {
@@ -30,6 +31,27 @@ test('id property of a blog is named correctly', async () => {
 
   assert.strictEqual(typeof blog.id, 'string')
   assert.strictEqual(blog._id, undefined)
+})
+
+test('post() adds a valid blog correctly', async () => {
+  const newBlog = listHelper.listWithOneBlogClean[0]
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const updatedBlogs = await helper.blogsInDb()
+  assert.strictEqual(updatedBlogs.length, helper.initialBlogs.length + 1)
+
+  const isBlogsContentAdded = updatedBlogs.some(blog =>
+    blog.title === newBlog.title &&
+    blog.author === newBlog.author &&
+    blog.url === newBlog.url &&
+    blog.likes === newBlog.likes
+  )
+  assert.strictEqual(true, isBlogsContentAdded)
 })
 
 after(async () => {
