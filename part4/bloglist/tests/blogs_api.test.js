@@ -24,6 +24,14 @@ test('get() retrieves all blogs', async () => {
   assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
+test('id property of a blog is named correctly', async () => {
+  const blogs = await helper.blogsInDb()
+  const blog = blogs[0]
+
+  assert.strictEqual(typeof blog.id, 'string')
+  assert.strictEqual(blog._id, undefined)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
