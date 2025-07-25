@@ -54,6 +54,21 @@ test('post() adds a valid blog correctly', async () => {
   assert.strictEqual(true, isBlogsContentAdded)
 })
 
+test.only('blog\'s likes property is handled correctly when post() adds a new blog', async () => {
+  const newBlog = listHelper.listWithOneBlogWithoutLikesPropertyClean[0]
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const updatedBlogs = await helper.blogsInDb()
+  const addedBlog = updatedBlogs.find(blog => blog.title === newBlog.title)
+
+  assert.strictEqual(addedBlog.likes, 0)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })

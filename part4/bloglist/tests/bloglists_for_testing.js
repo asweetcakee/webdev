@@ -203,6 +203,14 @@ const listWithSomeAuthorsWhereOneBlogIsNegative = [
   }
 ]
 
+const listWithOneBlogWithoutLikesPropertyClean = [
+  {
+    title: 'TDD harms architecture',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
+  }
+]
+
 const totalLikes = {
   oneBlog: listWithOneBlog,
   fewBlogs: listWithMoreThanOneBlog
@@ -240,6 +248,6 @@ const listWithMoreThanOneBlogClean = listWithMoreThanOneBlog.map(stripMongoPrope
 
 module.exports = {
   listWithOneBlog, listWithMoreThanOneBlog,
-  listWithOneBlogClean, listWithMoreThanOneBlogClean,
+  listWithOneBlogClean, listWithMoreThanOneBlogClean, listWithOneBlogWithoutLikesPropertyClean,
   totalLikes, favoriteBlog, mostBlogs, mostLikes
 }
