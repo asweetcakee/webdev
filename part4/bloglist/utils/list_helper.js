@@ -56,7 +56,7 @@ const mostLikes = (blogs) => {
     const { author, likes } = blog
     authorLikes[author] = (authorLikes[author] || 0) + likes
   }
-  console.log('-Author likes:', authorLikes)
+  //console.log('-Author likes:', authorLikes)
 
   let maxLikes = {
     author: null,
@@ -71,7 +71,7 @@ const mostLikes = (blogs) => {
       }
     }
   }
-  console.log('-Max blogs:', maxLikes)
+  //console.log('-Max blogs:', maxLikes)
   return maxLikes
 }
 

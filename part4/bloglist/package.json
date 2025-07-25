@@ -4,14 +4,16 @@
   "description": "contains part 4 exercises of Full Stack Open 2025 course",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js",
-    "lint": "eslint .",
-    "test": "node --test"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development node --watch index.js",
+    "test": "cross-env NODE_ENV=test node --test",
+    "test:only": "cross-env NODE_ENV=test node --test --test-only",
+    "lint": "eslint ."
   },
   "author": "asweetcakee",
   "license": "MIT",
   "dependencies": {
+    "cross-env": "^7.0.3",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "mongoose": "^8.16.4",
@@ -21,6 +23,7 @@
     "@eslint/js": "^9.31.0",
     "@stylistic/eslint-plugin-js": "^4.4.1",
     "eslint": "^9.31.0",
-    "globals": "^16.3.0"
+    "globals": "^16.3.0",
+    "supertest": "^7.1.4"
   }
 }
