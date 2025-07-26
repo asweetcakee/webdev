@@ -21,7 +21,11 @@ mongoose.connect(URL)
   })
 
 app.use(express.json())
-app.use(middleware.httpLogger)
+
+if (process.env.NODE_ENV !== 'test') {
+  app.use(middleware.httpLogger)
+}
+
 app.use('/api/blogs', blogRoutes)
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)

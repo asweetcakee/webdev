@@ -106,8 +106,12 @@ describe('Blog API', () => {
       assert.strictEqual(blogToView.likes, 0)
     })
 
-    test('returns 400 Bad Request when title or url properties are missing', async () => {
-      const blogToAdd = listHelper.listWithOneBlogWithoutTitleAndURLPropertyClean[0]
+    test('returns 400 Bad Request when title property is missing', async () => {
+      const blogToAdd = {
+        author: 'Robert C. Martin',
+        url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
+        likes: 5
+      }
 
       const response = await api
         .post('/api/blogs')
@@ -115,7 +119,26 @@ describe('Blog API', () => {
         .expect(400)
         .expect('Content-Type', /application\/json/)
 
-      assert.strictEqual(response.body.error, 'missing title or url')
+      assert.strictEqual(response.body.error, 'missing title')
+
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    })
+
+    test('returns 400 Bad Request when url property is missing', async () => {
+      const blogToAdd = {
+        title: 'TDD harms architecture',
+        author: 'Robert C. Martin',
+        likes: 5
+      }
+
+      const response = await api
+        .post('/api/blogs')
+        .send(blogToAdd)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      assert.strictEqual(response.body.error, 'missing url')
 
       const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
@@ -123,7 +146,7 @@ describe('Blog API', () => {
   })
 
   describe('DELETE /api/blogs/:id', () => {
-    test.only('returns 204 when blog is successfully deleted with a valid id', async () => {
+    test('returns 204 when blog is successfully deleted with a valid id', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart[0]
 
@@ -136,7 +159,7 @@ describe('Blog API', () => {
       assert.strictEqual(blogToView, false)
     })
 
-    test.only('returns 404 when blog doesn\'t exist', async () => {
+    test('returns 404 when blog doesn\'t exist', async () => {
       const validNonexistingId = await helper.generateNonExistingId()
 
       await api
@@ -144,7 +167,63 @@ describe('Blog API', () => {
         .expect(404)
     })
 
-    test.only('returns 400 when id is invalid', async () => {
+    test('returns 400 when id is invalid', async () => {
+      const invalidId = '5a422a851b54a676234d17f790125ga798'
+
+      await api
+        .delete(`/api/blogs/${invalidId}`)
+        .expect(400)
+    })
+  })
+
+  describe('PUT /api/blogs/:id', () => {
+    test('updates blog successfully with a valid id', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToUpdate = blogsAtStart[0]
+
+      const updatedData = {
+        title: 'TDD harms architecture',
+        author: 'Yuval Noah Harari',
+        url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
+        likes: 189
+      }
+
+      const response = await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(updatedData)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+      const blogsAtEnd = await helper.blogsInDb()
+      const blogToView = blogsAtEnd.find(blog => blog.id === blogToUpdate.id)
+
+      assert.deepStrictEqual(response.body, blogToView)
+    })
+
+    test('updates successfully only the likes property of a blog', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToUpdate = blogsAtStart[0]
+
+      const updatedLikes = { likes: blogToUpdate.likes + 1 }
+
+      const response = await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(updatedLikes)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+      assert.strictEqual(response.body.likes, blogToUpdate.likes + 1)
+    })
+
+    test('returns 404 when blog doesn\'t exist', async () => {
+      const validNonexistingId = await helper.generateNonExistingId()
+
+      await api
+        .delete(`/api/blogs/${validNonexistingId}`)
+        .expect(404)
+    })
+
+    test('returns 400 when id is invalid', async () => {
       const invalidId = '5a422a851b54a676234d17f790125ga798'
 
       await api
