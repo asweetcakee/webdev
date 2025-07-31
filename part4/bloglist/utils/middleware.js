@@ -6,7 +6,11 @@ morgan.token('body', (req) => {
   return JSON.stringify(req.body)
 })
 
-const httpLogger = morgan(`${tiny} :body`)
+let httpLogger = (req, res, next) => next()
+
+if (process.env.NODE_ENV !== 'test') {
+  morgan(`${tiny} :body`)
+}
 
 /* 2 */
 const unknownEndpoint = (req, res) => {
