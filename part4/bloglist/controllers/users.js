@@ -3,7 +3,8 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
 const MAGIC_NUMBERS = {
-  saltRounds: 10
+  saltRounds: 10,
+  minLength: 3
 }
 
 usersRouter.get('/', async (request, response) => {
@@ -15,6 +16,10 @@ usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body
 
   if (!username || !password) return response.status(400).json({ error: 'username and password are required' })
+
+  if (username.length < MAGIC_NUMBERS.minLength || password.length < MAGIC_NUMBERS.minLength) {
+    return response.status(400).json({ error: 'username and password must be at least 3 characters long' })
+  }
 
   const hashedPass = await bcrypt.hash(password, MAGIC_NUMBERS.saltRounds)
 
