@@ -5,6 +5,7 @@ const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blogRoutes = require('./controllers/blogs')
 const userRoutes = require('./controllers/users')
+const loginRoutes = require('./controllers/login')
 
 const app = express()
 
@@ -27,6 +28,7 @@ app.use(middleware.httpLogger)
 
 app.use('/api/blogs', blogRoutes)
 app.use('/api/users', userRoutes)
+app.use('/api/login', loginRoutes)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
