@@ -1,9 +1,12 @@
 const blogsRouter = require('express').Router()
 const { default: mongoose } = require('mongoose')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog
+    .find({})
+    .populate('user', { username: 1, name: 1, id: 1 })
   response.json(blogs)
 })
 
@@ -12,7 +15,9 @@ blogsRouter.get('/:id', async (request, response) => {
 
   if (!mongoose.isValidObjectId(id)) return response.status(400).json({ error: 'malformatted id' })
 
-  const blog = await Blog.findById(id)
+  const blog = await Blog
+    .findById(id)
+    .populate('user', { username: 1, name: 1, id: 1 })
 
   if (blog) {
     return response.json(blog)
@@ -24,17 +29,24 @@ blogsRouter.get('/:id', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   const { title, url, likes } = request.body
 
+  const user = await User.findOne()
+
+  if (!user) return response.status(400).json({ error: 'no user to assign' })
   if (!title) return response.status(400).json({ error: 'missing title' })
   else if (!url) return response.status(400).json({ error: 'missing url' })
 
-  const blogData = {
+  const blog = new Blog({
     ...request.body,
+    user: user._id,
     likes: likes !== undefined && likes !== null ? likes : 0
-  }
+  })
 
-  const blog = new Blog(blogData)
-  const result = await blog.save()
-  response.status(201).json(result)
+  const savedBlog = await blog.save()
+
+  user.blogs = user.blogs.concat(savedBlog._id)
+  await user.save()
+
+  response.status(201).json(savedBlog)
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
