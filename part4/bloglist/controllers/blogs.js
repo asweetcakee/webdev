@@ -1,7 +1,16 @@
 const blogsRouter = require('express').Router()
 const { default: mongoose } = require('mongoose')
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+
+const getToken = (request) => {
+  const magic_string = 'bearer '
+  const auth = request.get('authorization') || ''
+  return auth.toLowerCase().startsWith(magic_string)
+    ? auth.slice(magic_string.length).trim()
+    : null
+}
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -29,8 +38,13 @@ blogsRouter.get('/:id', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   const { title, url, likes } = request.body
 
-  const user = await User.findOne()
+  const token = getToken(request)
+  if (!token) return response.status(401).json({ error: 'token is missing' })
 
+  const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET)
+  if (!decodedToken.id) return response.status(401).json({ error: 'invalid token' })
+
+  const user = await User.findById(decodedToken.id)
   if (!user) return response.status(400).json({ error: 'no user to assign' })
   if (!title) return response.status(400).json({ error: 'missing title' })
   else if (!url) return response.status(400).json({ error: 'missing url' })
