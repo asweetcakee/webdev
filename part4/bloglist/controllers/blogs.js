@@ -1,8 +1,7 @@
 const blogsRouter = require('express').Router()
 const { default: mongoose } = require('mongoose')
-const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
-const User = require('../models/user')
+const userExtractor = require('../utils/middleware').userExtractor
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -27,17 +26,11 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', userExtractor, async (request, response) => {
   const { title, url, likes } = request.body
 
-  const token = request.token
-  if (!token) return response.status(401).json({ error: 'token is missing' })
+  const user = request.user
 
-  const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET)
-  if (!decodedToken.id) return response.status(401).json({ error: 'invalid token' })
-
-  const user = await User.findById(decodedToken.id)
-  if (!user) return response.status(400).json({ error: 'no user to assign' })
   if (!title) return response.status(400).json({ error: 'missing title' })
   else if (!url) return response.status(400).json({ error: 'missing url' })
 
@@ -55,14 +48,10 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const id = request.params.id
 
-  const token = request.token
-  if (!token) return response.status(401).json({ error: 'token is missing' })
-
-  const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET)
-  if (!decodedToken.id) return response.status(401).json({ error: 'invalid token' })
+  const user = request.user
 
   if (!mongoose.isValidObjectId(id)) return response.status(400).json({ error: 'malformatted id' })
 
@@ -70,7 +59,7 @@ blogsRouter.delete('/:id', async (request, response) => {
 
   if (!blogIsPresent) return response.status(404).json({ error: 'blog not found' })
 
-  if (blogIsPresent.user.toString() !== decodedToken.id) return response.status(401).json({ error: 'unauthorized delete attempt' })
+  if (blogIsPresent.user.toString() !== user.id) return response.status(401).json({ error: 'unauthorized delete attempt' })
 
   await Blog.findByIdAndDelete(id)
   response.status(204).end()

@@ -1,3 +1,6 @@
+const jwt = require('jsonwebtoken')
+const User = require('../models/user')
+
 /* 1 */
 const morgan = require('morgan')
 const tiny = ':method :url :status :res[content-length] - :response-time ms'
@@ -27,6 +30,14 @@ const errorHandler = (error, req, res, next) => {
     return res.status(400).json({ error: error.message })
   } else if (error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')) {
     return res.status(400).json({ error: 'expected `username` to be unique' })
+  } else if ([
+    'token is missing',
+    'invalid token',
+    'no user to assign'
+  ].includes(error.message)) {
+    return res
+      .status(error.message === 'no user to assign' ? 400 : 401)
+      .json({ error: error.message })
   }
   next(error)
 }
@@ -42,4 +53,19 @@ const tokenExtractor = (req, res, next) => {
   next()
 }
 
-module.exports = { httpLogger, unknownEndpoint, errorHandler, tokenExtractor }
+/* 5 */
+const userExtractor = async (req, res, next) => {
+  const token = req.token
+  if (!token) throw new Error('token is missing')
+
+  const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET)
+  if (!decodedToken.id) throw new Error('invalid token')
+
+  const user = await User.findById(decodedToken.id)
+  if (!user) throw new Error('no user to assign')
+
+  req.user = user
+  next()
+}
+
+module.exports = { httpLogger, unknownEndpoint, errorHandler, tokenExtractor, userExtractor }
