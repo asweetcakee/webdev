@@ -58,11 +58,19 @@ blogsRouter.post('/', async (request, response) => {
 blogsRouter.delete('/:id', async (request, response) => {
   const id = request.params.id
 
+  const token = request.token
+  if (!token) return response.status(401).json({ error: 'token is missing' })
+
+  const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET)
+  if (!decodedToken.id) return response.status(401).json({ error: 'invalid token' })
+
   if (!mongoose.isValidObjectId(id)) return response.status(400).json({ error: 'malformatted id' })
 
   const blogIsPresent = await Blog.findById(id)
 
   if (!blogIsPresent) return response.status(404).json({ error: 'blog not found' })
+
+  if (blogIsPresent.user.toString() !== decodedToken.id) return response.status(401).json({ error: 'unauthorized delete attempt' })
 
   await Blog.findByIdAndDelete(id)
   response.status(204).end()
