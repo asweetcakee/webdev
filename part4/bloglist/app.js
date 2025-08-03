@@ -25,6 +25,7 @@ mongoose.connect(URL)
 
 app.use(express.json())
 app.use(middleware.httpLogger)
+app.use(middleware.tokenExtractor)
 
 app.use('/api/blogs', blogRoutes)
 app.use('/api/users', userRoutes)
