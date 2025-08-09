@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const initialBlogs = require('./bloglists_for_testing').listWithMoreThanOneBlogClean
+const jwt = require('jsonwebtoken')
+const { default: mongoose } = require('mongoose')
 
 const initialUsers = [
   {
@@ -44,4 +46,48 @@ const hashPassword = async (password) => {
   return hashedPass
 }
 
-module.exports = { initialBlogs, initialUsers, blogsInDb, usersInDb, generateNonExistingId, hashPassword }
+const getFirstUserFromDb = async () => {
+  const users = await usersInDb()
+  const dbUser = users[0]
+
+  const rawUser = initialUsers.find(user => user.username === dbUser.username)
+
+  return {
+    ...dbUser,
+    password: rawUser.password
+  }
+}
+
+const loginAndGetToken = async (api, user = initialUsers[0]) => {
+  const loginResponse = await api
+    .post('/api/login')
+    .send({
+      username: user.username,
+      password: user.password
+    })
+  return loginResponse.body.token
+}
+
+const generateNonExistingToken = async () => {
+  const fakeId = new mongoose.Types.ObjectId()
+
+  const token = jwt.sign({
+    username: 'nonExisting',
+    id: fakeId.toString()
+  },
+  process.env.TOKEN_SECRET)
+
+  return token
+}
+
+module.exports = {
+  initialBlogs,
+  initialUsers,
+  blogsInDb,
+  usersInDb,
+  generateNonExistingId,
+  hashPassword,
+  getFirstUserFromDb,
+  loginAndGetToken,
+  generateNonExistingToken
+}

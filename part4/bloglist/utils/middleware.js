@@ -12,7 +12,7 @@ morgan.token('body', (req) => {
 let httpLogger = (req, res, next) => next()
 
 if (process.env.NODE_ENV !== 'test') {
-  morgan(`${tiny} :body`)
+  httpLogger = morgan(`${tiny} :body`)
 }
 
 /* 2 */
@@ -36,7 +36,7 @@ const errorHandler = (error, req, res, next) => {
     'no user to assign'
   ].includes(error.message)) {
     return res
-      .status(error.message === 'no user to assign' ? 400 : 401)
+      .status(401)
       .json({ error: error.message })
   }
   next(error)

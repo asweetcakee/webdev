@@ -65,16 +65,17 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   response.status(204).end()
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
   const { title, author, url, likes } = request.body
   const id = request.params.id
 
   if (!mongoose.isValidObjectId(id)) return response.status(400).json({ error: 'malformatted id' })
 
+  const blog = await Blog.findById(id)
+  if (!blog) return response.status(404).json({ error: 'blog doesn\'t exist' })
+
   const updatedBlog = { title, author, url, likes }
   const blogToUpdate = await Blog.findByIdAndUpdate(id, updatedBlog, { new: true, runValidators: true })
-
-  if (!blogToUpdate) return response.status(404).json({ error: 'blog doesn\'t exist' })
 
   response.json(blogToUpdate)
 })
