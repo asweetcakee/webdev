@@ -65,7 +65,12 @@ describe('Blog API', () => {
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
-      assert.deepStrictEqual(result.body, blogToView)
+      assert.strictEqual(result.body.title, blogToView.title)
+      assert.strictEqual(result.body.author, blogToView.author)
+      assert.strictEqual(result.body.url, blogToView.url)
+      assert.strictEqual(result.body.user.id, blogToView.user.toString())
+      assert.strictEqual(result.body.likes, blogToView.likes)
+      assert.strictEqual(result.body.id, blogToView.id)
     })
 
     test('returns 404 when blog doesn\'t exist with a valid id', async () => {

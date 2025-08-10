@@ -7,5 +7,6 @@ const USERNAME = process.env.USER_NAME
 const PASS_ENCODED = process.env.PASSWORD_ENCODED
 const PASSWORD = process.env.PASSWORD
 const PORT = process.env.PORT
+const TOKEN_SECRET = process.env.TOKEN_SECRET
 
-module.exports = { MONGODB_URI, USERNAME, PASS_ENCODED, PASSWORD, PORT }
+module.exports = { MONGODB_URI, USERNAME, PASS_ENCODED, PASSWORD, PORT, TOKEN_SECRET }

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
+const config = require('../utils/config')
 
 /* 1 */
 const morgan = require('morgan')
@@ -58,7 +59,7 @@ const userExtractor = async (req, res, next) => {
   const token = req.token
   if (!token) throw new Error('token is missing')
 
-  const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET)
+  const decodedToken = jwt.verify(token, config.TOKEN_SECRET)
   if (!decodedToken.id) throw new Error('invalid token')
 
   const user = await User.findById(decodedToken.id)
