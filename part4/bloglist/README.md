@@ -24,20 +24,20 @@ Each solved exercise is committed using the following convention:
 ### NPM packages
 
 **Production dependencies**
-- bcrypt — password hashing  
-- cross-env — set environment variables across OSes  
-- dotenv — environment variable management  
-- express — web server framework  
-- jsonwebtoken — token-based authentication  
-- mongoose — MongoDB ODM  
-- morgan — HTTP request logging 
+- `bcrypt` — password hashing  
+- `cross-env` — set environment variables across OSes  
+- `dotenv` — environment variable management  
+- `express` — web server framework  
+- `jsonwebtoken` — token-based authentication  
+- `mongoose` — MongoDB ODM  
+- `morgan` — HTTP request logging 
 
 **Development dependencies**
-- eslint — JavaScript linter  
-- @eslint/js — ESLint's core rules  
-- @stylistic/eslint-plugin-js — stylistic linting rules  
-- globals — predefined global variables for ESLint  
-- supertest — HTTP endpoint testing
+- `eslint` — JavaScript linter  
+- `@eslint/js` — ESLint's core rules  
+- `@stylistic/eslint-plugin-js` — stylistic linting rules  
+- `globals` — predefined global variables for ESLint  
+- `supertest` — HTTP endpoint testing
 
 ### NPM scripts
 - `start` — Run the application in **production** mode  
@@ -49,11 +49,10 @@ Each solved exercise is committed using the following convention:
 ## Overview
 
 **Project Tree**  
-The project follows this structure:
+<details>
+<summary><strong>Project Structure</strong></summary>
 
-**Project Tree**  
-The project follows this structure:
-
+```bash
 bloglist/                  # Root folder  
 ├── .env                   # Environment variables (not committed)  
 ├── .env.example           # Example environment variables  
@@ -91,7 +90,8 @@ bloglist/                  # Root folder
     ├── list_helper.js  
     ├── logger.js  
     └── middleware.js  
-
+```
+</details> 
 
 **Root Folder**  
 
@@ -100,16 +100,16 @@ bloglist/                  # Root folder
 - **.env.example** — provides an example of required environment variables for running the Bloglist app 
 - **eslint.config.mjs** — contains ESLint rules for static code analysis and enforcing code style  
 
+
+
 **Controllers Folder**
-
-Contains API route handlers for the Bloglist app following **RESTful guidelines**.
-
+Contains API route handlers for the Bloglist app following **RESTful guidelines**
 **Base Routes:**
 - `/api/blogs`
 - `/api/users`
 - `/api/login`
 
-- **blogs.js** — handles:
+**blogs.js** — handles:
   - **GET /api/blogs** — fetch all blogs as JSON, with populated user data
   - **GET /api/blogs/:id** — fetch a specific blog by an existing ID
   - **POST /api/blogs** — creates a new blog and assign it to the first user (according to exercise requirements)
@@ -117,16 +117,16 @@ Contains API route handlers for the Bloglist app following **RESTful guidelines*
   - **PUT /api/blogs/:id** — updates a blog by its existing ID
   - **Authorization:** `POST`, `DELETE`, and `PUT` require the `userExtractor()` middleware for token verification
 
-- **users.js** — handles:
+**users.js** — handles:
   - **GET /api/users** — fetch all users as JSON, with populated blog data
   - **POST /api/users** — creates a new user and passwords are hashed by using **bcrypt** (10 salt rounds)
 
-- **login.js** — handles:
+**login.js** — handles:
   - **POST /api/login** — authenticate a user and return a json web token (JWT). Requires plain-text password for verification
 
 
-**Models Folder**
 
+**Models Folder**
 Contains **Mongoose document schemas** for `Blog` and `User`
 
 - **blog.js** — Blog schema:
@@ -154,6 +154,8 @@ Contains **Mongoose document schemas** for `Blog` and `User`
   - transforms JSON by replacing `_id` with `id`
   - removes `_id`, `__v` and `passwordHash` fields from the output
 
+
+
 **Utils Folder**  
 Contains utility files:
 
@@ -168,6 +170,7 @@ Contains utility files:
 
 - **middleware.js**  
   Includes five middlewares that are used across the application
+
 
 
 **Middlewares**  
@@ -194,6 +197,8 @@ The application includes **five** middlewares:
   Verifies the token, finds the corresponding user from the database, and attaches the user object to `req.user`
   Throws an error if the token is missing, invalid, or no matching user is found
 
+
+
 **Tests folder**  
 Contains automated tests and helpers for the application:
 
@@ -206,14 +211,14 @@ Contains automated tests and helpers for the application:
   - `bloglists_for_testing.js` — provides static blog lists for test scenarios  
   - `test_helper.js` — provides reusable helper functions and `initialUsers` array for setting up test data
 
+
+
 **test_helper.js**  
 Contains reusable test utilities and mock data for integration and unit tests
-
 - **initialBlogs** — predefined set of blogs (from `bloglists_for_testing`) for seeding test data
 - **initialUsers** — array of initial user objects with plain-text passwords for test setup
 
 **Helper Functions:**
-
 - **blogsInDb** — retrieves the current list of blogs from the database in JSON format (transformed as per Blog model)  
 - **usersInDb** — retrieves the current list of users from the database in JSON format (transformed as per User model)  
 - **generateNonExistingId** — creates a valid but non-existent MongoDB ID by temporarily saving and deleting a document using Mongoose  
@@ -222,8 +227,12 @@ Contains reusable test utilities and mock data for integration and unit tests
 - **loginAndGetToken** — logs in with given user credentials and returns a valid token (*expects a plain-text password*)
 - **generateNonExistingToken** — generates a valid JWT token for a non-existent user by signing a fake Mongoose ID with `jsonwebtoken`
 
+
+
 **Test_routes folder**  
 Contains integration test files that perform HTTP requests (GET, POST, DELETE, PUT) against the API endpoints using a test runner (e.g., Jest + Supertest) 
+
+
 
 ## Clone and run locally
 
