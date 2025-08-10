@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt')
+const config = require('../utils/config')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const initialBlogs = require('./bloglists_for_testing').listWithMoreThanOneBlogClean
@@ -75,7 +76,7 @@ const generateNonExistingToken = async () => {
     username: 'nonExisting',
     id: fakeId.toString()
   },
-  process.env.TOKEN_SECRET)
+  config.TOKEN_SECRET)
 
   return token
 }
