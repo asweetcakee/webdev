@@ -249,7 +249,7 @@ cd part4/bloglist
 npm install
 ```
 
-Create your .env file and by copying the provided .env.example and update values as needed:
+Create your `.env` file and by copying the provided `.env.example` and update values as needed:
 ```bash
 cp .env.example .env
 ```
