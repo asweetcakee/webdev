@@ -8,11 +8,17 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   const MAGIC_STRINGS = {
     username: 'username',
     password: 'password',
-    localStorageLoggedUser: 'loggedBloglistAppUser'
+    localStorageLoggedUser: 'loggedBloglistAppUser',
+    title: 'title',
+    author: 'author',
+    url: 'url'
   }
 
   useEffect(() => {
@@ -25,6 +31,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem(MAGIC_STRINGS.localStorageLoggedUser)
     if (loggedUserJSON){
       const parsedJSON = JSON.parse(loggedUserJSON)
+      blogService.setToken(parsedJSON.token)
       setUser(parsedJSON)
     }
   }, [])
@@ -33,6 +40,9 @@ const App = () => {
     const { name, value } = event.target
     if (name === MAGIC_STRINGS.username) setUsername(value)
     else if (name === MAGIC_STRINGS.password) setPassword(value)
+    else if (name === MAGIC_STRINGS.title) setTitle(value)
+    else if (name === MAGIC_STRINGS.author) setAuthor(value)
+    else if (name === MAGIC_STRINGS.url) setUrl(value)
   }
 
   const handleLogin = async (event) => {
@@ -44,6 +54,7 @@ const App = () => {
         MAGIC_STRINGS.localStorageLoggedUser, 
         JSON.stringify(authenticatedUser)
       )
+      blogService.setToken(authenticatedUser.token)
       setUser(authenticatedUser)
 
       setUsername('')
@@ -56,6 +67,7 @@ const App = () => {
   const handleLogout = (event) => {
     event.preventDefault()
     window.localStorage.removeItem(MAGIC_STRINGS.localStorageLoggedUser)
+    blogService.setToken(null)
     setUser(null)
   }
 
@@ -86,6 +98,59 @@ const App = () => {
     </div>
   )
 
+  const handleCreateBlog = async (event) => {
+    event.preventDefault()
+    try{
+      const response = await blogService.create({
+        title, author, url
+      })
+      
+      setBlogs(blogs.concat(response))
+
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+    } catch(exception) {
+      console.error('Error', exception)
+    }
+  }
+
+  const createForm = () => (
+    <div>
+      <h2>create new</h2>
+      <form onSubmit={handleCreateBlog}>
+        <div>
+          title:
+          <input 
+            type="text" 
+            name={MAGIC_STRINGS.title}
+            value={title}
+            onChange={handleInput}
+          />
+        </div>
+        <div>
+          author:
+          <input 
+            type="text" 
+            name={MAGIC_STRINGS.author}
+            value={author}
+            onChange={handleInput}
+          />
+        </div>
+        <div>
+          url:
+          <input 
+            type="text" 
+            name={MAGIC_STRINGS.url}
+            value={url}
+            onChange={handleInput}
+          />
+        </div>
+        <button type='submit'>create</button>
+      </form>
+    </div>
+  ) 
+
   const listBlogs = () => (
     <div>
       <h2>blogs</h2>
@@ -93,6 +158,7 @@ const App = () => {
         {user.name} logged in
         <button onClick={handleLogout}>log out</button>
       </p>
+      {createForm()}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
