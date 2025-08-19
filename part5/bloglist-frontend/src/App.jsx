@@ -11,13 +11,22 @@ const App = () => {
 
   const MAGIC_STRINGS = {
     username: 'username',
-    password: 'password'
+    password: 'password',
+    localStorageLoggedUser: 'loggedBloglistAppUser'
   }
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )  
+  }, [])
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem(MAGIC_STRINGS.localStorageLoggedUser)
+    if (loggedUserJSON){
+      const parsedJSON = JSON.parse(loggedUserJSON)
+      setUser(parsedJSON)
+    }
   }, [])
 
   const handleInput = (event) => {
@@ -31,13 +40,23 @@ const App = () => {
     try {
       const credentials = { username, password }
       const authenticatedUser = await loginService.login(credentials)
+      window.localStorage.setItem(
+        MAGIC_STRINGS.localStorageLoggedUser, 
+        JSON.stringify(authenticatedUser)
+      )
       setUser(authenticatedUser)
-      
+
       setUsername('')
       setPassword('')
     } catch (exception) {
       console.error('Error:', exception)
     }
+  }
+  
+  const handleLogout = (event) => {
+    event.preventDefault()
+    window.localStorage.removeItem(MAGIC_STRINGS.localStorageLoggedUser)
+    setUser(null)
   }
 
   const loginForm = () => (
@@ -70,7 +89,10 @@ const App = () => {
   const listBlogs = () => (
     <div>
       <h2>blogs</h2>
-      <p>{user.name} logged in</p>
+      <p>
+        {user.name} logged in
+        <button onClick={handleLogout}>log out</button>
+      </p>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
