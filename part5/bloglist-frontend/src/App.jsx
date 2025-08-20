@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { useNotification, notificationTypes } from './hooks/useNotification'
@@ -11,9 +12,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const { notification, type: notificationType, notify } = useNotification()
   const createFormRef = useRef()
 
@@ -21,9 +19,6 @@ const App = () => {
     username: 'username',
     password: 'password',
     localStorageLoggedUser: 'loggedBloglistAppUser',
-    title: 'title',
-    author: 'author',
-    url: 'url',
     createBtnLabel: 'add blog'
   }
 
@@ -46,9 +41,6 @@ const App = () => {
     const { name, value } = event.target
     if (name === MAGIC_STRINGS.username) setUsername(value)
     else if (name === MAGIC_STRINGS.password) setPassword(value)
-    else if (name === MAGIC_STRINGS.title) setTitle(value)
-    else if (name === MAGIC_STRINGS.author) setAuthor(value)
-    else if (name === MAGIC_STRINGS.url) setUrl(value)
   }
 
   const handleLogin = async (event) => {
@@ -107,60 +99,16 @@ const App = () => {
     </div>
   )
 
-  const handleCreateBlog = async (event) => {
-    event.preventDefault()
+  const handleCreateBlog = async (blogObject) => {
     try{
-      const response = await blogService.create({
-        title, author, url
-      })
-
+      const response = await blogService.create(blogObject)
       setBlogs(blogs.concat(response))
-      notify(`a new blog ${title} by ${author} added`, notificationTypes.success)
-
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+      notify(`a new blog ${blogObject.title} by ${blogObject.author} added`, notificationTypes.success)
       createFormRef.current.hide()
     } catch(exception) {
       notify(`Error: ${exception.response?.data?.error || exception.message}`, notificationTypes.error)
     }
   }
-
-  const createForm = () => (
-    <div>
-      <h2>create new</h2>
-      <form onSubmit={handleCreateBlog}>
-        <div>
-          title:
-          <input 
-            type="text" 
-            name={MAGIC_STRINGS.title}
-            value={title}
-            onChange={handleInput}
-          />
-        </div>
-        <div>
-          author:
-          <input 
-            type="text" 
-            name={MAGIC_STRINGS.author}
-            value={author}
-            onChange={handleInput}
-          />
-        </div>
-        <div>
-          url:
-          <input 
-            type="text" 
-            name={MAGIC_STRINGS.url}
-            value={url}
-            onChange={handleInput}
-          />
-        </div>
-        <button type='submit'>create</button>
-      </form>
-    </div>
-  ) 
 
   const listBlogs = () => (
     <div>
@@ -171,7 +119,7 @@ const App = () => {
         <button onClick={handleLogout}>log out</button>
       </p>
       <Togglable buttonLabel={MAGIC_STRINGS.createBtnLabel} ref={createFormRef}>
-        {createForm()}
+        <BlogForm createBlog={handleCreateBlog}/>
       </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
