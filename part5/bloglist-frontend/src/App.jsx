@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,6 +12,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [notification, setNotification] = useState(null)
+  const [notificationType, setNotificationType] = useState(null)
 
   const MAGIC_STRINGS = {
     username: 'username',
@@ -19,6 +22,12 @@ const App = () => {
     title: 'title',
     author: 'author',
     url: 'url'
+  }
+
+  const notificationTypes = {
+    success: 'success',
+    error: 'error',
+    default: 'default'
   }
 
   useEffect(() => {
@@ -35,6 +44,21 @@ const App = () => {
       setUser(parsedJSON)
     }
   }, [])
+
+  useEffect(() => {
+    if(!notification) return
+    const timeoutId = setTimeout(() => {
+      setNotification(null)
+      setNotificationType(null)
+    }, 5000)
+
+    return () => clearTimeout(timeoutId)
+  }, [notification])
+
+  const notify = (message, type = notificationTypes.default) => {
+    setNotification(message)
+    setNotificationType(type)
+  }
 
   const handleInput = (event) => {
     const { name, value } = event.target
@@ -56,11 +80,12 @@ const App = () => {
       )
       blogService.setToken(authenticatedUser.token)
       setUser(authenticatedUser)
+      notify(`Successful login`, notificationTypes.success)
 
       setUsername('')
       setPassword('')
     } catch (exception) {
-      console.error('Error:', exception)
+      notify(`Wrong credentials`, notificationTypes.error)
     }
   }
   
@@ -69,11 +94,13 @@ const App = () => {
     window.localStorage.removeItem(MAGIC_STRINGS.localStorageLoggedUser)
     blogService.setToken(null)
     setUser(null)
+    notify('Successful logout', notificationTypes.success)
   }
 
   const loginForm = () => (
     <div>
       <h2>Log in to application</h2>
+      <Notification message={notification} type={notificationType} />
       <form onSubmit={handleLogin}>
         <div>
           username
@@ -106,12 +133,13 @@ const App = () => {
       })
       
       setBlogs(blogs.concat(response))
+      notify(`a new blog ${title} by ${author} added`, notificationTypes.success)
 
       setTitle('')
       setAuthor('')
       setUrl('')
     } catch(exception) {
-      console.error('Error', exception)
+      notify(`Error: ${exception.message}`, notificationTypes.error)
     }
   }
 
@@ -154,6 +182,7 @@ const App = () => {
   const listBlogs = () => (
     <div>
       <h2>blogs</h2>
+      <Notification message={notification} type={notificationType} />
       <p>
         {user.name} logged in
         <button onClick={handleLogout}>log out</button>
