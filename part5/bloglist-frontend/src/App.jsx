@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useNotification, notificationTypes } from './hooks/useNotification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,8 +14,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  const [notification, setNotification] = useState(null)
-  const [notificationType, setNotificationType] = useState(null)
+  const { notification, type: notificationType, notify } = useNotification()
+  const createFormRef = useRef()
 
   const MAGIC_STRINGS = {
     username: 'username',
@@ -21,13 +23,8 @@ const App = () => {
     localStorageLoggedUser: 'loggedBloglistAppUser',
     title: 'title',
     author: 'author',
-    url: 'url'
-  }
-
-  const notificationTypes = {
-    success: 'success',
-    error: 'error',
-    default: 'default'
+    url: 'url',
+    createBtnLabel: 'add blog'
   }
 
   useEffect(() => {
@@ -44,21 +41,6 @@ const App = () => {
       setUser(parsedJSON)
     }
   }, [])
-
-  useEffect(() => {
-    if(!notification) return
-    const timeoutId = setTimeout(() => {
-      setNotification(null)
-      setNotificationType(null)
-    }, 5000)
-
-    return () => clearTimeout(timeoutId)
-  }, [notification])
-
-  const notify = (message, type = notificationTypes.default) => {
-    setNotification(message)
-    setNotificationType(type)
-  }
 
   const handleInput = (event) => {
     const { name, value } = event.target
@@ -131,15 +113,16 @@ const App = () => {
       const response = await blogService.create({
         title, author, url
       })
-      
+
       setBlogs(blogs.concat(response))
       notify(`a new blog ${title} by ${author} added`, notificationTypes.success)
 
       setTitle('')
       setAuthor('')
       setUrl('')
+      createFormRef.current.hide()
     } catch(exception) {
-      notify(`Error: ${exception.message}`, notificationTypes.error)
+      notify(`Error: ${exception.response?.data?.error || exception.message}`, notificationTypes.error)
     }
   }
 
@@ -187,7 +170,9 @@ const App = () => {
         {user.name} logged in
         <button onClick={handleLogout}>log out</button>
       </p>
-      {createForm()}
+      <Togglable buttonLabel={MAGIC_STRINGS.createBtnLabel} ref={createFormRef}>
+        {createForm()}
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
