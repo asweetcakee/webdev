@@ -21,10 +21,13 @@ const App = () => {
     localStorageLoggedUser: 'loggedBloglistAppUser',
     createBtnLabel: 'add blog'
   }
-
+  const sortBlogsByLikesDesc = (blogs) => [...blogs].sort((a, b) => b.likes - a.likes)
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      {
+        const sortedBlogsByLikes = sortBlogsByLikesDesc(blogs)
+        setBlogs(sortedBlogsByLikes)
+      }
     )  
   }, [])
 
@@ -131,7 +134,9 @@ const App = () => {
   }
 
   const handleBlogUpdate = (updatedBlog) => {
-    setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
+    const updatedBlogs = blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog)
+    const sortedBlogsByLikes = sortBlogsByLikesDesc(updatedBlogs)
+    setBlogs(sortedBlogsByLikes)
   }
 
   const listBlogs = () => (
