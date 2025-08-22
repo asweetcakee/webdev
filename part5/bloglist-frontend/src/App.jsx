@@ -7,6 +7,13 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { useNotification, notificationTypes } from './hooks/useNotification'
 
+const MAGIC_STRINGS = {
+  username: 'username',
+  password: 'password',
+  localStorageLoggedUser: 'loggedBloglistAppUser',
+  createBtnLabel: 'add blog'
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
@@ -15,20 +22,14 @@ const App = () => {
   const { notification, type: notificationType, notify } = useNotification()
   const createFormRef = useRef()
 
-  const MAGIC_STRINGS = {
-    username: 'username',
-    password: 'password',
-    localStorageLoggedUser: 'loggedBloglistAppUser',
-    createBtnLabel: 'add blog'
-  }
   const sortBlogsByLikesDesc = (blogs) => [...blogs].sort((a, b) => b.likes - a.likes)
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      {
-        const sortedBlogsByLikes = sortBlogsByLikesDesc(blogs)
-        setBlogs(sortedBlogsByLikes)
-      }
-    )  
+    {
+      const sortedBlogsByLikes = sortBlogsByLikesDesc(blogs)
+      setBlogs(sortedBlogsByLikes)
+    }
+    )
   }, [])
 
   useEffect(() => {
@@ -52,20 +53,20 @@ const App = () => {
       const credentials = { username, password }
       const authenticatedUser = await loginService.login(credentials)
       window.localStorage.setItem(
-        MAGIC_STRINGS.localStorageLoggedUser, 
+        MAGIC_STRINGS.localStorageLoggedUser,
         JSON.stringify(authenticatedUser)
       )
       blogService.setToken(authenticatedUser.token)
       setUser(authenticatedUser)
-      notify(`Successful login`, notificationTypes.success)
+      notify('Successful login', notificationTypes.success)
 
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      notify(`Wrong credentials`, notificationTypes.error)
+    } catch {
+      notify('Wrong credentials', notificationTypes.error)
     }
   }
-  
+
   const handleLogout = (event) => {
     event.preventDefault()
     window.localStorage.removeItem(MAGIC_STRINGS.localStorageLoggedUser)
@@ -81,7 +82,7 @@ const App = () => {
       <form onSubmit={handleLogin}>
         <div>
           username
-          <input 
+          <input
             type='text'
             name={MAGIC_STRINGS.username}
             value={username}
@@ -90,7 +91,7 @@ const App = () => {
         </div>
         <div>
           password
-          <input 
+          <input
             type='password'
             name={MAGIC_STRINGS.password}
             value={password}
@@ -127,7 +128,7 @@ const App = () => {
         user: blog.user
       }
       handleBlogUpdate(updatedBlog)
-      notify(`Likes has been increased by 1`, notificationTypes.success)
+      notify('Likes has been increased by 1', notificationTypes.success)
     } catch(exception) {
       notify(`Error: ${exception.response?.data?.error || exception.message}`, notificationTypes.error)
     }
@@ -172,8 +173,8 @@ const App = () => {
   return (
     <div>
       { user === null
-          ? loginForm()
-          : listBlogs()
+        ? loginForm()
+        : listBlogs()
       }
     </div>
   )

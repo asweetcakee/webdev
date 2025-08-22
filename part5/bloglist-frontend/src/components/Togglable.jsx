@@ -1,4 +1,4 @@
-import { useState, forwardRef, useImperativeHandle } from "react"
+import { useState, forwardRef, useImperativeHandle } from 'react'
 
 const Togglable = forwardRef(({ buttonLabel, children }, refs) => {
   const [visible, setVisible] = useState(false)
@@ -25,7 +25,7 @@ const Togglable = forwardRef(({ buttonLabel, children }, refs) => {
           {children}
           <button onClick={handleVisibility}>cancel</button>
         </div>
-      )}      
+      )}
     </div>
   )
 })

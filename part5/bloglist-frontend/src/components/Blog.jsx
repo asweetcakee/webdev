@@ -1,8 +1,8 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ blog, onLike, loggedUser, onDelete }) => {
   const [visible, setVisible] = useState(false)
-  
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -14,7 +14,7 @@ const Blog = ({ blog, onLike, loggedUser, onDelete }) => {
   const handleVisibility = () => {
     setVisible(!visible)
   }
-  
+
   const canDelete = blog.user.username === loggedUser.username
 
   return (
@@ -41,7 +41,7 @@ const Blog = ({ blog, onLike, loggedUser, onDelete }) => {
           )}
         </div>
       )}
-  </div>
-)}
+    </div>
+  )}
 
 export default Blog

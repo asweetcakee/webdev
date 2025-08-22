@@ -2,11 +2,11 @@ const Notification = ({ message, type }) => {
   if (!message) return null
 
   const baseStyle = {
-    padding: "10px",
-    backgroundColor: "lightgrey",
-    borderRadius: "5px",
-    marginBottom: "10px",
-    fontSize: "1.5em"
+    padding: '10px',
+    backgroundColor: 'lightgrey',
+    borderRadius: '5px',
+    marginBottom: '10px',
+    fontSize: '1.5em'
   }
 
   const colors = {

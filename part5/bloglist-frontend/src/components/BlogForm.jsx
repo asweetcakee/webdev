@@ -1,20 +1,20 @@
 import { useState } from 'react'
 
+const MAGIC_STRINGS = {
+  title: 'title',
+  author: 'author',
+  url: 'url'
+}
+
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const MAGIC_STRINGS = {
-    title: 'title',
-    author: 'author',
-    url: 'url'
-  }
-
   const handleCreateBlog = async (event) => {
     event.preventDefault()
     createBlog({ title, author, url })
-    
+
     setTitle('')
     setAuthor('')
     setUrl('')
@@ -26,15 +26,15 @@ const BlogForm = ({ createBlog }) => {
     else if (name === MAGIC_STRINGS.author) setAuthor(value)
     else if (name === MAGIC_STRINGS.url) setUrl(value)
   }
-  
+
   return(
     <div>
       <h2>create new</h2>
       <form onSubmit={handleCreateBlog}>
         <div>
           title:
-          <input 
-            type="text" 
+          <input
+            type="text"
             name={MAGIC_STRINGS.title}
             value={title}
             onChange={handleInput}
@@ -42,8 +42,8 @@ const BlogForm = ({ createBlog }) => {
         </div>
         <div>
           author:
-          <input 
-            type="text" 
+          <input
+            type="text"
             name={MAGIC_STRINGS.author}
             value={author}
             onChange={handleInput}
@@ -51,8 +51,8 @@ const BlogForm = ({ createBlog }) => {
         </div>
         <div>
           url:
-          <input 
-            type="text" 
+          <input
+            type="text"
             name={MAGIC_STRINGS.url}
             value={url}
             onChange={handleInput}
