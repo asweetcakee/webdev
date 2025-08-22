@@ -139,6 +139,19 @@ const App = () => {
     setBlogs(sortedBlogsByLikes)
   }
 
+  const handleBlogDelete = async (blogToDelete) => {
+    const clientResponse = window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`)
+    if (!clientResponse) return
+    try {
+      await blogService.deleteBlog(blogToDelete.id)
+      const filteredBlogs = blogs.filter(blog => blog.id !== blogToDelete.id)
+      setBlogs(sortBlogsByLikesDesc(filteredBlogs))
+      notify(`Blog ${blogToDelete.title} by ${blogToDelete.author} was deleted by ${user.name}`, notificationTypes.success)
+    } catch (exception) {
+      notify(`Error: ${exception.response?.data?.error || exception.message}`, notificationTypes.error)
+    }
+  }
+
   const listBlogs = () => (
     <div>
       <h2>blogs</h2>
@@ -151,7 +164,7 @@ const App = () => {
         <BlogForm createBlog={handleCreateBlog}/>
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} onLike={handleLikes} />
+        <Blog key={blog.id} blog={blog} onLike={handleLikes} loggedUser={user} onDelete={handleBlogDelete}/>
       )}
     </div>
   )
