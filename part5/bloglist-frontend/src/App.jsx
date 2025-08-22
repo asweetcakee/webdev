@@ -110,6 +110,30 @@ const App = () => {
     }
   }
 
+  const handleLikes = async (blog) => {
+    try {
+      const blogToUpdate = {
+        ...blog,
+        user: blog.user.id,
+        likes: blog.likes + 1
+      }
+
+      const response = await blogService.update(blog.id, blogToUpdate)
+      const updatedBlog = {
+        ...response,
+        user: blog.user
+      }
+      handleBlogUpdate(updatedBlog)
+      notify(`Likes has been increased by 1`, notificationTypes.success)
+    } catch(exception) {
+      notify(`Error: ${exception.response?.data?.error || exception.message}`, notificationTypes.error)
+    }
+  }
+
+  const handleBlogUpdate = (updatedBlog) => {
+    setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
+  }
+
   const listBlogs = () => (
     <div>
       <h2>blogs</h2>
@@ -122,7 +146,7 @@ const App = () => {
         <BlogForm createBlog={handleCreateBlog}/>
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog}/>
+        <Blog key={blog.id} blog={blog} onLike={handleLikes} />
       )}
     </div>
   )
