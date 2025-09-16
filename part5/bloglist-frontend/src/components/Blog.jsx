@@ -20,7 +20,8 @@ const Blog = ({ blog, onLike, loggedUser, onDelete }) => {
   return (
     <div style={blogStyle}>
       <div>
-        {blog.title} {blog.author}
+        <label className='blog-title'>{blog.title}</label>
+        <label className='blog-author'>{blog.author}</label>
         <span>  </span>
         <button onClick={handleVisibility}>
           {visible ? 'hide' : 'view'}
