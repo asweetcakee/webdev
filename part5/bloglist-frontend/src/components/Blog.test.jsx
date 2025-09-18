@@ -5,7 +5,6 @@ import userEvent from '@testing-library/user-event'
 
 let blog
 let loggedUser
-let container
 
 beforeEach(() => {
   blog = {
@@ -20,18 +19,22 @@ beforeEach(() => {
   }
 
   loggedUser = { username: 'test' }
+})
 
-  container = render(
+const renderBlog = (overrides = {}) => {
+  return render(
     <Blog
       blog={blog}
       loggedUser={loggedUser}
       onLike={() => {}}
       onDelete={() => {}}
+      {...overrides}
     />
-  ).container
-})
+  )
+}
 
 test('displays author and title but hides URL, likes, and user details by default', () => {
+  const { container } = renderBlog()
   const title = container.querySelector('.blog-title')
   const author = container.querySelector('.blog-author')
   expect(author).toHaveTextContent(blog.author)
@@ -47,6 +50,7 @@ test('displays author and title but hides URL, likes, and user details by defaul
 })
 
 test('displays url and likes count when view button is pressed', async () => {
+  const { container } = renderBlog()
   const user = userEvent.setup()
   const viewButton = screen.getByRole('button', { name: 'view' })
   await user.click(viewButton)
@@ -57,4 +61,22 @@ test('displays url and likes count when view button is pressed', async () => {
 
   expect(container).toHaveTextContent(blog.url)
   expect(container).toHaveTextContent(`likes ${blog.likes}`)
+})
+
+test('clicking like button twice calls onLike twice', async () => {
+  const mockOnLike = vi.fn()
+  const user = userEvent.setup()
+  renderBlog({ onLike: mockOnLike })
+
+  const viewButton = screen.getByRole('button', { name: 'view' })
+  await user.click(viewButton)
+
+  const likeButton = screen.getByRole('button', { name: 'like' })
+  expect(likeButton).toBeInTheDocument()
+  expect(likeButton).toHaveTextContent('like')
+
+  await user.click(likeButton)
+  await user.click(likeButton)
+  expect(mockOnLike).toHaveBeenCalledTimes(2)
+  expect(mockOnLike).toHaveBeenCalledWith(blog)
 })
