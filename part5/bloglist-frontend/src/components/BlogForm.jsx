@@ -38,6 +38,7 @@ const BlogForm = ({ createBlog }) => {
             name={MAGIC_STRINGS.title}
             value={title}
             onChange={handleInput}
+            placeholder={`enter ${MAGIC_STRINGS.title}`}
           />
         </div>
         <div>
@@ -47,6 +48,7 @@ const BlogForm = ({ createBlog }) => {
             name={MAGIC_STRINGS.author}
             value={author}
             onChange={handleInput}
+            placeholder={`enter ${MAGIC_STRINGS.author}`}
           />
         </div>
         <div>
@@ -56,6 +58,7 @@ const BlogForm = ({ createBlog }) => {
             name={MAGIC_STRINGS.url}
             value={url}
             onChange={handleInput}
+            placeholder={`enter ${MAGIC_STRINGS.url}`}
           />
         </div>
         <button type='submit'>create</button>
