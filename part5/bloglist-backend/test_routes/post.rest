@@ -1,0 +1,62 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "The Hitchhiker's Guide to the Galaxy",
+  "author": "Douglas Adams",
+  "url": "https://en.wikipedia.org/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy",
+  "likes": 42
+}
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+  "author": "Robert C. Martin",
+  "url": "https://www.goodreads.com/book/show/3735293-clean-code",
+  "likes": 1500
+}
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Learning React: Modern Patterns for Developing React Apps",
+  "author": "Alex Banks and Eve Porcello",
+  "url": "https://www.oreilly.com/library/view/learning-react/9781492051722/",
+  "likes": 876
+}
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Sapiens: A Brief History of Humankind",
+  "author": "Yuval Noah Harari",
+  "url": "https://www.ynharari.com/sapiens",
+  "likes": 2300
+}
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "ahmm",
+  "author": "nope",
+  "url": "no url",
+  "likes": 0
+}
+
+###
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username": "root",
+  "password": "admin"
+}
