@@ -21,7 +21,7 @@ const Notification = ({ message, type }) => {
     border: `3px solid ${colors[type] || colors.default}`
   }
 
-  return <div style={finalStyle}>{message}</div>
+  return <div data-testid="notification" style={finalStyle}>{message}</div>
 }
 
 export default Notification

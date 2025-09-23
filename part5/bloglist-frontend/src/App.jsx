@@ -162,7 +162,7 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={notification} type={notificationType} />
       <p>
-        {user.name} logged in
+        <span>{user.name} logged in</span>
         <button onClick={handleLogout}>log out</button>
       </p>
       <Togglable buttonLabel={MAGIC_STRINGS.createBtnLabel} ref={createFormRef}>
