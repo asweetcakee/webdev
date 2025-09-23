@@ -14,4 +14,27 @@ const hasNotification = async (page, message, textColor, borderColor) => {
   await expect(notification).toHaveCSS('border', `3px solid ${borderColor}`)
 }
 
-export { loginWith, hasNotification }
+const openBlogForm = async (page) => {
+  await page.getByRole('button', { name: 'add blog' }).click()
+}
+
+const fillAndSubmitBlogForm = async (page, blog) => {
+  await page.getByRole('textbox', { name: 'enter title' }).fill(blog.title)
+  await page.getByRole('textbox', { name: 'enter author' }).fill(blog.author)
+  await page.getByRole('textbox', { name: 'enter url' }).fill(blog.url)
+  await page.getByRole('button', { name: 'create' }).click()
+}
+
+const expectLocatorsVisible = async (locators) => {
+  for (const locator of locators) {
+    await expect(locator).toBeVisible()
+  }
+}
+
+export { 
+  loginWith, 
+  hasNotification, 
+  openBlogForm,
+  fillAndSubmitBlogForm, 
+  expectLocatorsVisible
+}
