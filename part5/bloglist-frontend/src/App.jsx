@@ -81,22 +81,26 @@ const App = () => {
       <Notification message={notification} type={notificationType} />
       <form onSubmit={handleLogin}>
         <div>
-          username
-          <input
-            type='text'
-            name={MAGIC_STRINGS.username}
-            value={username}
-            onChange={handleInput}
-          />
+          <label>
+            username
+            <input
+              type='text'
+              name={MAGIC_STRINGS.username}
+              value={username}
+              onChange={handleInput}
+            />
+          </label>
         </div>
         <div>
-          password
-          <input
-            type='password'
-            name={MAGIC_STRINGS.password}
-            value={password}
-            onChange={handleInput}
-          />
+          <label>
+            password
+            <input
+              type='password'
+              name={MAGIC_STRINGS.password}
+              value={password}
+              onChange={handleInput}
+            />
+          </label>
         </div>
         <button type='submit'>log in</button>
       </form>
