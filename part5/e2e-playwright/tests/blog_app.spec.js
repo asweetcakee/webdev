@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith, hasNotification, openBlogForm, fillAndSubmitBlogForm, expectLocatorsVisible } = require('./helper')
+const { loginWith, hasNotification, openBlogForm, fillAndSubmitBlogForm, expectLocatorsVisible, getToken, addBlogs, expectBlogsOrderedByTitle, expandAllBlogs, getLikeCounts } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -28,6 +28,48 @@ describe('Blog app', () => {
       page.getByRole('textbox', { name: 'password' }),
       page.getByRole('button', { name: 'log in' })
     ])
+  })
+
+  test('blogs are sorted according to likes count in descending order', async({ page, request }) => {
+    const token = await getToken(request, { username: 'test', password: 'testpass' })
+    
+    const blogs = [
+      {
+        title: 'TDD harms architecture',
+        author: 'Robert C. Martin',
+        url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
+        likes: 10
+      },
+      {
+        title: 'React patterns',
+        author: 'Michael Chan',
+        url: 'https://reactpatterns.com/',
+        likes: 35
+      },
+      {
+        title: 'Go To Statement Considered Harmful',
+        author: 'Edsger W. Dijkstra',
+        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
+        likes: 20
+      }
+    ]
+    
+    await addBlogs(request, blogs, token)
+    await page.goto('/')
+    
+    await loginWith(page, 'test', 'testpass')
+    await hasNotification(page, `Successful login`, 'rgb(0, 128, 0)', 'rgb(0, 128, 0)')
+
+    await expectBlogsOrderedByTitle(page, [
+      blogs[1].title,
+      blogs[2].title,
+      blogs[0].title
+    ])
+
+    await expandAllBlogs(page, blogs)
+
+    const likeCounts = await getLikeCounts(page)
+    expect(likeCounts).toEqual([...likeCounts].sort((a, b) => b - a))
   })
 
   describe('Login', () => {

@@ -23,7 +23,10 @@ const Blog = ({ blog, onLike, loggedUser, onDelete }) => {
         <label className='blog-title'>{blog.title}</label>
         <label className='blog-author'>{blog.author}</label>
         <span>  </span>
-        <button onClick={handleVisibility}>
+        <button
+          aria-label={`view blog ${blog.title}`}
+          onClick={handleVisibility}
+        >
           {visible ? 'hide' : 'view'}
         </button>
       </div>
@@ -32,7 +35,12 @@ const Blog = ({ blog, onLike, loggedUser, onDelete }) => {
           <div>{blog.url}</div>
           <div>
             <span>likes {blog.likes}</span>
-            <button onClick={() => onLike(blog)}>like</button>
+            <button
+              aria-label={`like blog ${blog.title}`}
+              onClick={() => onLike(blog)}
+            >
+              like
+            </button>
           </div>
           <div>{blog.user.name}</div>
           {canDelete && (
