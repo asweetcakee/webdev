@@ -27,7 +27,7 @@ blogsRouter.get('/:id', async (request, response) => {
 })
 
 blogsRouter.post('/', userExtractor, async (request, response) => {
-  const { title, url, likes } = request.body
+  const { title, url, author, likes } = request.body
 
   const user = request.user
 
@@ -35,9 +35,11 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   else if (!url) return response.status(400).json({ error: 'missing url' })
 
   const blog = new Blog({
-    ...request.body,
+    title,
+    url,
+    author,
     user: user._id,
-    likes: likes !== undefined && likes !== null ? likes : 0
+    likes: likes ?? 0
   })
 
   const savedBlog = await blog.save()
@@ -45,7 +47,9 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
-  response.status(201).json(savedBlog)
+  const populatedBlog = await savedBlog.populate('user', { username: 1, name: 1 })
+
+  response.status(201).json(populatedBlog)
 })
 
 blogsRouter.delete('/:id', userExtractor, async (request, response) => {
@@ -74,8 +78,14 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
   const blog = await Blog.findById(id)
   if (!blog) return response.status(404).json({ error: 'blog doesn\'t exist' })
 
+  if (blog.user.toString() !== request.user.id) {
+    return response.status(401).json({ error: 'unauthorized update attempt' })
+  }
+
   const updatedBlog = { title, author, url, likes }
-  const blogToUpdate = await Blog.findByIdAndUpdate(id, updatedBlog, { new: true, runValidators: true })
+  const blogToUpdate = await Blog
+    .findByIdAndUpdate(id, updatedBlog, { new: true, runValidators: true })
+    .populate('user', { username: 1, name: 1 })
 
   response.json(blogToUpdate)
 })
