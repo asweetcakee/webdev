@@ -10,11 +10,17 @@ describe('Blog app', () => {
       password: 'testpass'
     }
     await request.post('/api/users', { data: userTestData })
+    const secondUserData = {
+      name: 'Second test subject',
+      username: 'second',
+      password: 'secondpass'
+    }
+    await request.post('/api/users', { data: secondUserData })
     await page.goto('/')
   })
 
   test('Login form is shown', async ({ page }) => {
-    expectLocatorsVisible([
+    await expectLocatorsVisible([
       page.getByRole('heading', { name: 'Log in to application' }),
       page.getByText('username'),
       page.getByText('password'),
@@ -109,6 +115,27 @@ describe('Blog app', () => {
         await deleteBtn.click()
 
         await hasNotification(page, `Blog TDD harms architecture by Robert C. Martin was deleted by Test subject`, 'rgb(0, 128, 0)', 'rgb(0, 128, 0)')
+      })
+
+      test('user who didn\'t create a blog cannot delete it', async ({ page }) => {
+        await page.getByRole('button', { name: 'log out' }).click()
+        await expectLocatorsVisible([
+          page.getByRole('heading', { name: 'Log in to application' }),
+          page.getByText('username'),
+          page.getByText('password'),
+          page.getByRole('textbox', { name: 'username' }),
+          page.getByRole('textbox', { name: 'password' }),
+          page.getByRole('button', { name: 'log in' })
+        ])
+        await hasNotification(page, `Successful logout`, 'rgb(0, 128, 0)', 'rgb(0, 128, 0)')
+        
+        await loginWith(page, 'second', 'secondpass')
+        await hasNotification(page, `Successful login`, 'rgb(0, 128, 0)', 'rgb(0, 128, 0)')
+
+        await page.getByRole('button', { name: 'view' }).click()
+        
+        await expect(page.getByText('Test subject', { exact: true })).toBeVisible()
+        await expect(page.getByRole('button', { name: 'delete' })).toHaveCount(0)
       })
     })
   })
