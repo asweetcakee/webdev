@@ -73,5 +73,26 @@ describe('Blog app', () => {
       await expect(page.getByText(blogTestData.author, { exact: true })).toBeVisible()
       await expect(page.getByRole('button', { name: 'view' })).toBeVisible()
     })
+
+    test('can like a blog', async ({ page }) => {
+      await openBlogForm(page)
+      const blogTestData = {
+        title: 'TDD harms architecture',
+        author: 'Robert C. Martin',
+        url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html'
+      }
+      await fillAndSubmitBlogForm(page, blogTestData)
+      
+      const viewBtn = page.getByRole('button', { name: 'view' })
+      await expect(viewBtn).toBeVisible()
+      await viewBtn.click()
+      
+      await expect(page.getByText(/^likes 0$/i)).toBeVisible()
+      const likeBtn = page.getByRole('button', { name: 'like' })
+      await expect(likeBtn).toBeVisible()
+      
+      await likeBtn.click()
+      await expect(page.getByText(/^likes 1$/i)).toBeVisible()
+    })
   })
 })
