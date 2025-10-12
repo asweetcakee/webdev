@@ -13,7 +13,9 @@ Each solved exercise is committed using the following convention:
 
 ## Folder structure
 **Backend**: `bloglist-backend` from Part 4
+
 **Frontend**: `bloglist-frontend`
+
 **E2E**: `e2e-playwright`
 
 
