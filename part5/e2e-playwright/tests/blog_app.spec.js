@@ -1,0 +1,184 @@
+const { test, expect, beforeEach, describe } = require('@playwright/test')
+const { loginWith, hasNotification, openBlogForm, fillAndSubmitBlogForm, expectLocatorsVisible, getToken, addBlogs, expectBlogsOrderedByTitle, expandAllBlogs, getLikeCounts } = require('./helper')
+
+describe('Blog app', () => {
+  beforeEach(async ({ page, request }) => {
+    await request.post('/api/testing/reset')
+    const userTestData = {
+      name: 'Test subject',
+      username: 'test',
+      password: 'testpass'
+    }
+    await request.post('/api/users', { data: userTestData })
+    const secondUserData = {
+      name: 'Second test subject',
+      username: 'second',
+      password: 'secondpass'
+    }
+    await request.post('/api/users', { data: secondUserData })
+    await page.goto('/')
+  })
+
+  test('Login form is shown', async ({ page }) => {
+    await expectLocatorsVisible([
+      page.getByRole('heading', { name: 'Log in to application' }),
+      page.getByText('username'),
+      page.getByText('password'),
+      page.getByRole('textbox', { name: 'username' }),
+      page.getByRole('textbox', { name: 'password' }),
+      page.getByRole('button', { name: 'log in' })
+    ])
+  })
+
+  test('blogs are sorted according to likes count in descending order', async({ page, request }) => {
+    const token = await getToken(request, { username: 'test', password: 'testpass' })
+    
+    const blogs = [
+      {
+        title: 'TDD harms architecture',
+        author: 'Robert C. Martin',
+        url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
+        likes: 10
+      },
+      {
+        title: 'React patterns',
+        author: 'Michael Chan',
+        url: 'https://reactpatterns.com/',
+        likes: 35
+      },
+      {
+        title: 'Go To Statement Considered Harmful',
+        author: 'Edsger W. Dijkstra',
+        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
+        likes: 20
+      }
+    ]
+    
+    await addBlogs(request, blogs, token)
+    await page.goto('/')
+    
+    await loginWith(page, 'test', 'testpass')
+    await hasNotification(page, `Successful login`, 'rgb(0, 128, 0)', 'rgb(0, 128, 0)')
+
+    await expectBlogsOrderedByTitle(page, [
+      blogs[1].title,
+      blogs[2].title,
+      blogs[0].title
+    ])
+
+    await expandAllBlogs(page, blogs)
+
+    const likeCounts = await getLikeCounts(page)
+    expect(likeCounts).toEqual([...likeCounts].sort((a, b) => b - a))
+  })
+
+  describe('Login', () => {
+    test('succeeds with correct credentials', async ({ page }) => {
+      await loginWith(page, 'test', 'testpass')
+      const userLoggedIn = page.getByText('Test subject logged in')
+      await expect(userLoggedIn).toBeVisible()
+      
+      await hasNotification(page, 'Successful login', 'rgb(0, 128, 0)', 'rgb(0, 128, 0)')
+
+      const addBlogBtn = page.getByRole('button', { name: 'add blog' })
+      await expect(addBlogBtn).toBeVisible()
+    })
+
+    test('fails with wrong credentials', async ({ page }) => {
+      await loginWith(page, 'test', 'wrongpass')
+      await hasNotification(page, 'Wrong credentials', 'rgb(255, 0, 0)', 'rgb(255, 0, 0)')
+    })
+  })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, 'test', 'testpass')
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      await openBlogForm(page)
+      await expectLocatorsVisible([
+        page.getByRole('heading', { name: 'create new' }),
+        page.getByText(/title/i),
+        page.getByRole('textbox', { name: /title/i }),
+        page.getByText(/author/i),
+        page.getByRole('textbox', { name: /author/i }),
+        page.getByText(/url/i),
+        page.getByRole('textbox', { name: /url/i }),
+        page.getByRole('button', { name: 'create' }),
+        page.getByRole('button', { name: 'cancel' })
+      ])
+      
+      const blogTestData = {
+        title: 'TDD harms architecture',
+        author: 'Robert C. Martin',
+        url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html'
+      }
+      await fillAndSubmitBlogForm(page, blogTestData)
+      await hasNotification(page, `a new blog ${blogTestData.title} by ${blogTestData.author} added`, 'rgb(0, 128, 0)', 'rgb(0, 128, 0)')
+      
+      await expect(page.getByText(blogTestData.title, { exact: true })).toBeVisible()
+      await expect(page.getByText(blogTestData.author, { exact: true })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'view' })).toBeVisible()
+    })
+
+    describe('create a blog and view details', () => {
+      beforeEach(async ({ page }) => {
+        await openBlogForm(page)
+        const blogTestData = {
+          title: 'TDD harms architecture',
+          author: 'Robert C. Martin',
+          url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html'
+        }
+        await fillAndSubmitBlogForm(page, blogTestData)
+        const viewBtn = page.getByRole('button', { name: 'view' })
+        await viewBtn.click()
+      })
+
+      test('can like a blog', async ({ page }) => {
+        await expect(page.getByText(/^likes 0$/i)).toBeVisible()
+        const likeBtn = page.getByRole('button', { name: 'like' })
+        await expect(likeBtn).toBeVisible()
+        
+        await likeBtn.click()
+        await expect(page.getByText(/^likes 1$/i)).toBeVisible()
+      })
+
+      test('user can delete their blog', async ({ page }) => {
+        await expect(page.getByText('Test subject', { exact: true })).toBeVisible()
+        const deleteBtn = page.getByRole('button', { name: 'delete' })
+        await expect(deleteBtn).toBeVisible()
+        
+        page.on('dialog', async dialog => {
+          console.log(`Dialog message: ${dialog.message()}`)
+          await dialog.accept()
+        })
+        
+        await deleteBtn.click()
+
+        await hasNotification(page, `Blog TDD harms architecture by Robert C. Martin was deleted by Test subject`, 'rgb(0, 128, 0)', 'rgb(0, 128, 0)')
+      })
+
+      test('user who didn\'t create a blog cannot delete it', async ({ page }) => {
+        await page.getByRole('button', { name: 'log out' }).click()
+        await expectLocatorsVisible([
+          page.getByRole('heading', { name: 'Log in to application' }),
+          page.getByText('username'),
+          page.getByText('password'),
+          page.getByRole('textbox', { name: 'username' }),
+          page.getByRole('textbox', { name: 'password' }),
+          page.getByRole('button', { name: 'log in' })
+        ])
+        await hasNotification(page, `Successful logout`, 'rgb(0, 128, 0)', 'rgb(0, 128, 0)')
+        
+        await loginWith(page, 'second', 'secondpass')
+        await hasNotification(page, `Successful login`, 'rgb(0, 128, 0)', 'rgb(0, 128, 0)')
+
+        await page.getByRole('button', { name: 'view' }).click()
+        
+        await expect(page.getByText('Test subject', { exact: true })).toBeVisible()
+        await expect(page.getByRole('button', { name: 'delete' })).toHaveCount(0)
+      })
+    })
+  })
+})

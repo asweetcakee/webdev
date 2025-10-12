@@ -1,6 +1,6 @@
 ## **Full Stack Open (Mooc.fi - Helsinki University)**
 
-This repository contains **my** solutions and projects from the **Full Stack Open** course offered by the **University of Helsinki**. 
+This repository contains **my solutions and projects** from the [**Full Stack Open**](https://fullstackopen.com/en/) course 2025 offered by the [University of Helsinki](https://www.helsinki.fi/en). 
 The course focuses on modern web development techniques using **JavaScript, React, Node.js, and more**.
 
 ## The primary goals of this repository are to:
@@ -9,21 +9,22 @@ The course focuses on modern web development techniques using **JavaScript, Reac
 - Demonstrate my growing skills in web development
 
 ## Technologies Used
-- React
-- JS (ES6+)
-- JSX
-- HTML, CSS
-- Vite
-- Node.js & npm
-- REST APIs
+- **Frontend**: React, JSX, HTML, CSS, Vite  
+- **Backend**: Node.js, Express, REST APIs, AJAX  
+- **Tools & Languages**: JavaScript (ES6+), npm
+
+## Tests
+- **Backend**: node:test, supertest  
+- **Frontend**: Vitest, jsdom  
+- **End-to-End (E2E)**: Playwright
 
 ## Current progress: WIP
 - [x] Part 0
 - [x] Part 1
 - [x] Part 2
 - [x] Part 3
-- [ ] part 4
-- [ ] part 5
+- [x] part 4
+- [x] part 5
 - [ ] part 6
 - [ ] part 7
 - [ ] part 8
