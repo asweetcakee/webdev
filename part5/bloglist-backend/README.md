@@ -1,6 +1,7 @@
 ## Full Stack Open 2025 — Part 5  
 This directory contains my **backend implementation**, originally built for [**Part 4**](https://github.com/asweetcakee/webdev/tree/fullstackopen/part4/bloglist),  
-and now **reused and slightly improved** for **Part 5** of the [Full Stack Open 2025](https://fullstackopen.com/en/part5) course. 
+and now **reused and slightly improved** for **Part 5** of the [Full Stack Open 2025](https://fullstackopen.com/en/part5) course.
+
 The project is built with **Node.js**, **Express**, and **MongoDB** (via Mongoose) and focuses on:
 
 - **Unit testing** and **Integration testing** with **Jest** and **Supertest**  
