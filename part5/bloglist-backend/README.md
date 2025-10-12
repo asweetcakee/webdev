@@ -21,6 +21,15 @@ The project is built with **Node.js**, **Express**, and **MongoDB** (via Mongoos
 - Only the *owner* (authenticated creator) of the blog can update it.  
 - The updated blog response now also includes populated user details for consistent frontend rendering.
 
+### **Testing Environment**
+- Added a **conditional test route mount** for integration testing in `app.js`
+```js
+  if (process.env.NODE_ENV === 'test') {
+    const testingRoutes = require('./controllers/testing')
+    app.use('/api/testing', testingRoutes)
+  }
+```
+ 
 
 ## Setup
 
