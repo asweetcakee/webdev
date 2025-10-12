@@ -12,11 +12,9 @@ Each solved exercise is committed using the following convention:
 > `Completed [exercise number]: [exercise name]. [what was done in the exercise]`
 
 ## Folder structure
-**Backend**: `bloglist-backend` from Part 4
-
-**Frontend**: `bloglist-frontend`
-
-**E2E**: `e2e-playwright`
+**Backend**: [`bloglist-backend`](https://github.com/asweetcakee/webdev/tree/fullstackopen/part5/bloglist-backend) 
+**Frontend**: [`bloglist-frontend`](https://github.com/asweetcakee/webdev/tree/fullstackopen/part5/bloglist-frontend) 
+**E2E**: [`e2e-playwright`](https://github.com/asweetcakee/webdev/tree/fullstackopen/part5/e2e-playwright) 
 
 
 ## Clone and run locally
