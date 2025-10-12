@@ -1,3 +1,19 @@
+/*
+ * App.jsx
+ *
+ * Main React component that manages the overall state and behavior of the blog list application.
+ *
+ * Responsibilities:
+ * - Handles user authentication (login/logout with localStorage persistence)
+ * - Manages blog CRUD operations via `blogService`
+ * - Displays notifications using `useNotification` custom hook
+ * - Conditionally renders either the login form or the blog list
+ *
+ * Key React Hooks:
+ * - useState: Manages blogs, user authentication data and controlled input values for the login form
+ * - useEffect: Loads blogs from backend and restores user from localStorage
+ * - useRef: Controls BlogForm visibility via Togglable
+ */
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -7,6 +23,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { useNotification, notificationTypes } from './hooks/useNotification'
 
+// --- Constants ---
 const MAGIC_STRINGS = {
   username: 'username',
   password: 'password',
@@ -22,14 +39,19 @@ const App = () => {
   const { notification, type: notificationType, notify } = useNotification()
   const createFormRef = useRef()
 
+  // --- Effects: Initial Data Fetch and LocalStorage Sync ---
   const sortBlogsByLikesDesc = (blogs) => [...blogs].sort((a, b) => b.likes - a.likes)
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-    {
-      const sortedBlogsByLikes = sortBlogsByLikesDesc(blogs)
-      setBlogs(sortedBlogsByLikes)
+    const fetchBlogs = async () => {
+      try {
+        const blogs = await blogService.getAll()
+        const sortedBlogsByLikes = sortBlogsByLikesDesc(blogs)
+        setBlogs(sortedBlogsByLikes)
+      } catch (error) {
+        notify(`Error fetching blogs: ${error.message}`, notificationTypes.error)
+      }
     }
-    )
+    fetchBlogs()
   }, [])
 
   useEffect(() => {
@@ -41,6 +63,7 @@ const App = () => {
     }
   }, [])
 
+  // --- Event Handlers: Login / Logout / Input Changes ---
   const handleInput = (event) => {
     const { name, value } = event.target
     if (name === MAGIC_STRINGS.username) setUsername(value)
@@ -107,6 +130,7 @@ const App = () => {
     </div>
   )
 
+  // --- Blog Actions: Create, Update (Likes), Delete ---
   const handleCreateBlog = async (blogObject) => {
     try{
       const response = await blogService.create(blogObject)
