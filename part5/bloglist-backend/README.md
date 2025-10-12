@@ -258,7 +258,7 @@ git checkout fullstackopen
 
 Navigate to the backend folder (Express) and install dependencies:
 ```bash
-cd part5/bloglist
+cd part5/bloglist-backend
 npm install
 ```
 
