@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 const notificationTypes = {
   success: 'success',
@@ -20,10 +20,10 @@ const useNotification = () => {
     return () => clearTimeout(timeoutId)
   }, [notification])
 
-  const notify = (message, newType = notificationTypes.default) => {
+  const notify = useCallback((message, newType = 'default') => {
     setNotification(message)
     setType(newType)
-  }
+  }, [])
 
   return {
     notification,

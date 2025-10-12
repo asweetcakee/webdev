@@ -52,7 +52,7 @@ const App = () => {
       }
     }
     fetchBlogs()
-  }, [])
+  }, [notify])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem(MAGIC_STRINGS.localStorageLoggedUser)
