@@ -34,6 +34,11 @@
       "id": "aa35",
       "content": "Program testing can be used to show the presence of bugs, but never to show their absence",
       "votes": 0
+    },
+    {
+      "id": "1de5",
+      "content": "A primary cause of complexity is that software vendors uncritically adopt any feature users suggest.",
+      "votes": 0
     }
   ]
 }
