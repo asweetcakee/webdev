@@ -5,3 +5,15 @@ export const getAnecdotes = async() => {
   if (!response.ok) throw new Error('Failed to fetch anecdotes')
   return await response.json()
 }
+
+export const addAnecdote = async(newAnecdote) => {
+  const options = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newAnecdote)
+  }
+
+  const response = await fetch(baseUrl, options)
+  if (!response.ok) throw new Error('Failed to add new anecdote')
+  return await response.json()
+}
