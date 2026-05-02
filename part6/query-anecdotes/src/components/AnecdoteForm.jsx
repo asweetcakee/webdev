@@ -1,7 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { addAnecdote } from "../../requests"
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { addAnecdote } from '../../requests'
+import { useNotify } from '../hooks/useNotification'
 
 const AnecdoteForm = () => {
+  const setNotification = useNotify() 
   const queryClient = useQueryClient()
 
   const newAnecdoteMutation = useMutation({
@@ -16,11 +18,12 @@ const AnecdoteForm = () => {
     event.preventDefault()
     const content = event.target.anecdote.value
     if (content.length < 5) {
-      alert('Too short anecdote, must have length 5 or more')
+      setNotification('Too short anecdote, must have length 5 or more', 5)
       return
     }
     event.target.anecdote.value = ''
     newAnecdoteMutation.mutate({ content, votes: 0 })
+    setNotification(content, 5)
   }
 
   return (
