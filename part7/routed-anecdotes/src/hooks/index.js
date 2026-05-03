@@ -31,11 +31,19 @@ export const useAnecdotes = () => {
   
   const addAnecdote = (anecdote) => {
     anecdoteService.createNew(anecdote)
-      .then(data => setAnecdotes(anecdotes.concat(data)))
+      .then(data => setAnecdotes(prev => prev.concat(data)))
       .catch(error => {
         console.log('Error saving anecdote:', error?.message)
       })
   }
 
-  return { anecdotes, addAnecdote }
+  const deleteAnecdote = (id) => {
+    anecdoteService.deleteSelected(id)
+      .then(data => setAnecdotes(prev => prev.filter(a => a.id !== id)))
+      .catch(error => {
+        console.log('Error deleting anecdote:', error?.message)
+      })
+  }
+
+  return { anecdotes, addAnecdote, deleteAnecdote }
 }
