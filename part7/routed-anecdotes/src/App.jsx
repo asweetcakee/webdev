@@ -8,12 +8,8 @@ import CreateNew from './components/CreateNew'
 import { useAnecdotes } from './hooks'
 
 const App = () => {
-  const { anecdotes } = useAnecdotes()
+  const { anecdotes, addAnecdote } = useAnecdotes()
   if (anecdotes.length === 0) return <h2> LOADING </h2>
-
-  const addAnecdote = (anecdote) => {
-    //setAnecdotes(anecdotes.concat({ ...anecdote, id: Math.round(Math.random() * 10000) }))
-  }
 
   return (
     <Router>

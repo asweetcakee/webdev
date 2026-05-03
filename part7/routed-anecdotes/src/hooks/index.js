@@ -22,8 +22,20 @@ export const useAnecdotes = () => {
   const [anecdotes, setAnecdotes] = useState([])
 
   useEffect(() => {
-    anecdoteService.getAll().then(data => setAnecdotes(data))
+    anecdoteService.getAll()
+      .then(data => setAnecdotes(data))
+      .catch(error => {
+        console.log('Error retrieving anecdotes:', error?.message)
+      })
   }, [])
   
-  return { anecdotes }
+  const addAnecdote = (anecdote) => {
+    anecdoteService.createNew(anecdote)
+      .then(data => setAnecdotes(anecdotes.concat(data)))
+      .catch(error => {
+        console.log('Error saving anecdote:', error?.message)
+      })
+  }
+
+  return { anecdotes, addAnecdote }
 }
